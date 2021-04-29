@@ -1,5 +1,5 @@
 <div align="center">
-    <h1 align="center">Welcome to web-scraper 👋</h1>
+    <h1 align="center">Welcome to web-scraper 🕸️</h1>
 
     A simple web scraping with Puppeteer in TypeScript
 

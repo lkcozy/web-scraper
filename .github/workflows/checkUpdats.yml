@@ -1,9 +1,10 @@
-name:  🔎 Check Updates
+name:  🕸️ Check Updates
 
 on:
   push:
     branches:
       - main
+
 
 jobs:
   build:
@@ -25,14 +26,14 @@ jobs:
           CI: true
 
       - name: ✉️ Send mail
-        if: always()
+        if: ${{steps.check.outputs.hasNewData == true}}
         uses: dawidd6/action-send-mail@v3
         with:
           server_address: smtp.gmail.com
           server_port: 465
           username: ${{ secrets.EMAIL_USERNAME }}
           password: ${{ secrets.EMAIL_PASSWORD }}
-          subject: Reviewing ${{steps.check.outputs.current}} (${{steps.check.outputs.latest}})
+          subject: 🕸️ Reviewing ${{steps.check.outputs.current}}(${{steps.check.outputs.latest}})
           html_body: |
             <!DOCTYPE html>
             <html>
