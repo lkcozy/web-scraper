@@ -10,26 +10,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
-
-      - name: 🔎 Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn cache dir)"
-
-      - name: 📝 Cache dependencies
-        uses: actions/cache@v2
-        id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
-        with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
-
+        
+      - uses: egordm/gha-yarn-node-cache@v1
+        
       - name: 🔧 Install and Build
         run: |
           yarn
           yarn build
-        env:
-          CI: true
 
       - name: 🔎 Check Updates
         id: check
@@ -39,13 +26,22 @@ jobs:
 
       - name: ✉️ Send mail
         if: always()
-        uses: dawidd6/action-send-mail@v2
+        uses: dawidd6/action-send-mail@v3
         with:
           server_address: smtp.gmail.com
           server_port: 465
           username: ${{ secrets.EMAIL_USERNAME }}
           password: ${{ secrets.EMAIL_PASSWORD }}
           subject: Reviewing ${{steps.check.outputs.current}} (${{steps.check.outputs.latest}})
-          body: We’re currently finalizing most applications we received between ${{steps.check.outputs.current}}. Last updated:${{steps.check.outputs.latest}}.
+          html_body: |
+            <!DOCTYPE html>
+            <html>
+            <body>
+            <h1>We’re currently finalizing most applications we received between</h1>
+            <p>${{steps.check.outputs.current}}</p>
+            <h2>Last updated</h2>
+            <p>${{steps.check.outputs.latest}}</p>
+            </body>
+            </html>
           to: lkklcozy@gmail.com
-          from: lkcozy
+          from: github-actions-update
