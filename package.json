@@ -4,6 +4,7 @@
   "main": "index.ts",
   "repository": "git@github.com:lkcozy/web-scraper.git",
   "author": "Kan Luo <lkklcozy@gmail.com>",
+  "description": "A simple web scraping with Puppeteer in TypeScript",
   "license": "MIT",
   "scripts": {
     "start": "yarn node dist/index.js",
