@@ -17,22 +17,14 @@ const saveData = (key: string, value: string) => {
     await continueButton.click();
   }
 
-  const data = await page.evaluate(() => {
-    const latest = (document.querySelector(
-      '.label.label-info',
-    ) as HTMLElement).innerText.replace('Last updated:', '');
+  const latest = await page.$eval('.label.label-info', (el) =>
+    (el as HTMLElement).innerText.replace('Last updated:', ''),
+  );
+  const current = await page.$eval('.mrgn-tp-0.h2', (el) =>
+    (el as HTMLElement).innerText.replace(/\n/g, '').replace('?', ''),
+  );
 
-    const current = (document.querySelector(
-      '.mrgn-tp-0.h2',
-    ) as HTMLElement).innerText
-      .replace(/\n/g, '')
-      .replace('?', '');
-    return { latest, current };
-  });
-
-  const { latest, current } = data;
-
-  const hasNewData = data.latest !== process.env.latest;
+  const hasNewData = latest !== process.env.latest;
   if (hasNewData) {
     saveData('latest', latest);
     saveData('current', current);
