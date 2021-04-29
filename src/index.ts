@@ -7,7 +7,7 @@ const saveData = (key: string, value: string) => {
 };
 
 (async () => {
-  const browser = await puppeteer.launch({ args: ['--no-sandbox'] });
+  const browser = await puppeteer.launch();
   const page = await browser.newPage();
   await page.goto(
     'https://www.canada.ca/en/immigration-refugees-citizenship/services/application/check-status.html',
