@@ -24,7 +24,8 @@ const saveData = (key: string, value: string) => {
     (el as HTMLElement).innerText.replace(/\n/g, '').replace('?', ''),
   );
 
-  const hasNewData = latest !== process.env.latest;
+  const hasNewData =
+    latest !== process.env.latest || current !== process.env.current;
   if (hasNewData) {
     saveData('latest', latest);
     saveData('current', current);
