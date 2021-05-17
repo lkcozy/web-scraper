@@ -25,7 +25,7 @@ const saveData = (key: string, value: string) => {
   );
 
   const hasNewData =
-    latest !== process.env.latest || current !== process.env.current ? 1 : 0;
+    latest !== process.env.latest || current !== process.env.current;
 
   if (hasNewData) {
     saveData('latest', latest);

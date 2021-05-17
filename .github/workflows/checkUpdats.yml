@@ -14,6 +14,7 @@ jobs:
       - uses: actions/checkout@master
 
       - uses: egordm/gha-yarn-node-cache@v1
+        if: ${{ !env.ACT }}
 
       - name: 🔧 Install and Build
         run: |
@@ -27,7 +28,7 @@ jobs:
           CI: true
 
       - name: ✉️ Send mail
-        if: ${{steps.check.outputs.hasNewData == 1}}
+        if: always()
         uses: dawidd6/action-send-mail@v3
         with:
           server_address: smtp.gmail.com
