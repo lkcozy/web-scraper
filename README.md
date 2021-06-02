@@ -51,6 +51,11 @@ act --secret-file act.secrets
 
 ## Reference
 
+- [gh-action-data-scraping](https://github.com/sw-yx/gh-action-data-scraping)
+
+This repo shows how to use github actions to do automated data scraping, with storage in git itself! free git storage and scheduled updates!!!
+
+
 - [Puppeteer](https://github.com/puppeteer/puppeteer): Puppeteer is a tool to manipulate web page by using headless Chrome.
 
 - [Setting up a typescript project in 2021](https://dev.to/avalon-lab/setting-up-a-typescript-project-in-2021-4cfg): This post will describe how to create a project in typescript from scratch. The final project include some basic code, tests, commit hooks to enforce code formatting, automatic tests on push and more. [Source Code](https://github.com/xiorcal/ts-demo)
