@@ -11,6 +11,10 @@ const saveData = (key: string, value: string) => {
   const page = await browser.newPage();
   await page.goto(
     'https://www.canada.ca/en/immigration-refugees-citizenship/services/application/check-status.html',
+    {
+      // consider navigation to be finished when there are no more than 0 network connections for at least 500 ms.
+      waitUntil: 'networkidle0',
+    },
   );
   const continueButton = await page.$('aria/Continue');
   if (continueButton) {

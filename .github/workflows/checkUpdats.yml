@@ -1,11 +1,8 @@
 name:  🕸️ Check Updates
 
 on:
-  push:
-    branches:
-      - main
   schedule:
-    - cron: '0 19 * * 2' # https://crontab.guru/
+    - cron: '0 19 * * *' # https://crontab.guru/
 
 jobs:
   build:
