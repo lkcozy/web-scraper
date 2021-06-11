@@ -2,7 +2,7 @@ name:  🕸️ Check Updates
 
 on:
   schedule:
-    - cron: '0 19 * * *' # https://crontab.guru/
+    - cron: '0 20 * * 1' # https://crontab.guru/
 
 jobs:
   build:
