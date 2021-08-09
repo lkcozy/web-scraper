@@ -3,6 +3,7 @@ import to from 'await-to-js'
 import * as dotenv from 'dotenv'
 import * as R from 'ramda'
 import * as core from '@actions/core'
+import logger from 'loglevel'
 
 dotenv.config()
 
@@ -22,11 +23,14 @@ type Forecast = {
 }
 
 const getAirQuality = async (cityName: string) => {
-  const [, result] = await to(
+  const [error, result] = await to(
     fetch(
       `${AIR_QUALITY_API_URL}/${cityName}/?token=${AIR_QUALITY_API_TOKEN}`,
     ).then(r => r.json()),
   )
+  if (error) {
+    logger.error(`fetch ${cityName} aqi failed`, error.message)
+  }
   if (!result?.data) return {}
   const { aqi, forecast, time, city } = result.data
   const todayDate = time.s.split(' ')[0]
@@ -66,9 +70,10 @@ const getAirQuality = async (cityName: string) => {
   const details = sortedResultWithAvg.map((r, idx) =>
     [`${idx + 1}. ${r.name}`, r.value, r.avg, r.max, r.recent].join(),
   )
-  const content = [['City', 'Now', 'Avg', 'Max', 'Recent'], ...details].join(
-    '<br/>',
-  )
+  const content = [
+    ['City', 'Now', 'Avg', 'Max', 'Recent 7 Days Avg'],
+    ...details,
+  ].join('<br/>')
   core.setOutput('content', content)
 
   const levels = [50, 100, 150, 200, 300, 301]
