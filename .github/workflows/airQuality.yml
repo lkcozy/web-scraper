@@ -1,8 +1,6 @@
 name:  🕸️ Check Air Quality
 
-# on:
-#   schedule:
-#     - cron: '0 16 * * *' # https://crontab.guru/
+on: push
 
 jobs:
   build:
