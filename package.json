@@ -4,19 +4,24 @@
   "main": "index.ts",
   "repository": "git@github.com:lkcozy/web-scraper.git",
   "author": "Kan Luo <lkklcozy@gmail.com>",
-  "description": "A simple web scraping with Puppeteer in TypeScript",
+  "description": "A simple web scraping in TypeScript",
   "license": "MIT",
   "scripts": {
     "start": "tsc-watch --onSuccess \"node ./dist/index.js\"",
+    "dev:air-quality": "tsc-watch src/airQuality.ts --outDir ./dist --onSuccess \"node ./dist/airQuality.js\"",
     "serve": "yarn node dist/index.js",
+    "serve:air-quality": "yarn node dist/airQuality.js",
     "build": "tsc",
-    "lint": "eslint src --ext .js,.jsx,.ts,.tsx",
+    "lint": "eslint src --ext .ts",
     "format": "prettier --write --loglevel warn",
-    "lint:all:format": "yarn format \"**/*.{tsx,ts,json,css,scss,html,md}\""
+    "lint:all:format": "yarn format \"**/*.{ts,json,md}\""
   },
   "dependencies": {
     "@actions/core": "^1.4.0",
-    "puppeteer": "^10.0.0"
+    "await-to-js": "^3.0.0",
+    "node-fetch": "^2.6.1",
+    "puppeteer": "^10.2.0",
+    "ramda": "^0.27.1"
   },
   "husky": {
     "hooks": {
@@ -25,9 +30,12 @@
   },
   "devDependencies": {
     "@tsconfig/recommended": "^1.0.1",
-    "@typescript-eslint/eslint-plugin": "^4.26.0",
-    "@typescript-eslint/parser": "^4.26.0",
-    "eslint": "^7.28.0",
+    "@types/dotenv": "^8.2.0",
+    "@types/node-fetch": "^2.5.12",
+    "@types/ramda": "^0.27.44",
+    "@typescript-eslint/eslint-plugin": "^4.29.0",
+    "@typescript-eslint/parser": "^4.29.0",
+    "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-import": "^2.23.0",
     "husky": "^4.3.8",

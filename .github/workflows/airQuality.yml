@@ -1,8 +1,8 @@
-name:  🕸️ Check Updates
+name:  🕸️ Check Air Quality
 
-on:
-  schedule:
-    - cron: '0 20 * * 1' # https://crontab.guru/
+# on:
+#   schedule:
+#     - cron: '0 16 * * *' # https://crontab.guru/
 
 jobs:
   build:
@@ -20,9 +20,12 @@ jobs:
 
       - name: 🔎 Check Updates
         id: check
-        run: yarn serve
+        run: yarn serve:air-quality
         env:
           CI: true
+          AIR_QUALITY_API_TOKEN: ${{ secrets.AIR_QUALITY_API_TOKEN }}
+          AIR_QUALITY_CITY_LIST: ${{ secrets.AIR_QUALITY_CITY_LIST }}
+
 
       - name: ✉️ Send mail
         if: always()
@@ -32,15 +35,15 @@ jobs:
           server_port: 465
           username: ${{ secrets.EMAIL_USERNAME }}
           password: ${{ secrets.EMAIL_PASSWORD }}
-          subject: 🕸️ WebScraper Reviewing ${{steps.check.outputs.current}}(${{steps.check.outputs.latest}})
+          subject: AQI ${{steps.check.outputs.subject}}
           html_body: |
             <!DOCTYPE html>
             <html>
             <body>
-            <h1>We’re currently finalizing most applications we received between</h1>
-            <p>${{steps.check.outputs.current}}</p>
-            <h2>Last updated</h2>
-            <p>${{steps.check.outputs.latest}}</p>
+            <h1>Today AQI</h1>
+            <p>${{steps.check.outputs.content}}</p>
+            <h2>AQI Levels</h2>
+            <p>${{steps.check.outputs.levels}}</p>
             </body>
             </html>
           to: lkklcozy@gmail.com
