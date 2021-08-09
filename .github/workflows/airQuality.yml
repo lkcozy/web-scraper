@@ -24,6 +24,9 @@ jobs:
           AIR_QUALITY_API_TOKEN: ${{ secrets.AIR_QUALITY_API_TOKEN }}
           AIR_QUALITY_CITY_LIST: ${{ secrets.AIR_QUALITY_CITY_LIST }}
 
+      - name: Get current date
+        id: date
+        run: echo "::set-output name=date::$(date +'%Y-%m-%dT%H:%M')"
 
       - name: ✉️ Send mail
         if: always()
@@ -38,7 +41,7 @@ jobs:
             <!DOCTYPE html>
             <html>
             <body>
-            <h1>Today AQI</h1>
+            <h1>${{ steps.date.outputs.date }} AQI</h1>
             <p>${{steps.check.outputs.content}}</p>
             <h2>AQI Levels</h2>
             <p>${{steps.check.outputs.levels}}</p>
