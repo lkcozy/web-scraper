@@ -63,8 +63,8 @@ const getAirQuality = async (cityName: string) => {
     [R.descend(R.prop('avg')), R.ascend(R.prop('name'))],
     result,
   )
-  const details = sortedResultWithAvg.map(r =>
-    [r.name, r.value, r.avg, r.max, r.recent].join(),
+  const details = sortedResultWithAvg.map((r, idx) =>
+    [`${idx + 1}. ${r.name}`, r.value, r.avg, r.max, r.recent].join(),
   )
   const content = [['City', 'Now', 'Avg', 'Max', 'Recent'], ...details].join(
     '<br/>',
