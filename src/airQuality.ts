@@ -58,7 +58,7 @@ const getAirQuality = async (cityName: string) => {
 ;(async () => {
   const result = await Promise.all(cityList.map(city => getAirQuality(city)))
   const subject = result.map(r => `${r.name}:${r.avg}`)
-  core.setOutput('subject', subject)
+  core.setOutput('subject', subject.join(';'))
   const sortedResultWithAvg = R.sortWith(
     [R.descend(R.prop('avg')), R.ascend(R.prop('name'))],
     result,
