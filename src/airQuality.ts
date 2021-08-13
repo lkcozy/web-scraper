@@ -102,9 +102,11 @@ const AQI_LEVELS = [
 ]
 
 const setAirQualityLevels = () => {
-  const levels = R.map(R.prop('value'), AQI_LEVELS)
-  const levelsName = R.map(R.prop('label'), AQI_LEVELS)
-  core.setOutput('levels', `${levelsName.join(',')}<br/>${levels.join(',')}`)
+  const levels = AQI_LEVELS.map(
+    ({ value, label, emoji }, idx) => `${idx + 1}: ${emoji}${value} ${label}`,
+    AQI_LEVELS,
+  ).join('<br/>')
+  core.setOutput('levels', levels)
 }
 
 const getAqiStr = (aqi: number) => {
@@ -142,8 +144,8 @@ const getCityName = (name: string) => {
       getDiffStr(r.diffAvg),
       getDiffStr(r.diffMax),
       getAqiStr(r.recent),
-      `${r.temperature}°C`,
-      `${r.humidity}%`,
+      `🌡️ ${r.temperature}°C`,
+      `💧 ${r.humidity}%`,
     ].join(),
   )
   const content = [
