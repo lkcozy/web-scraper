@@ -43,20 +43,24 @@ const getPm25Data = (
   )
   const forecastPm25 = forecast.daily.pm25
   const todayAqi = forecastPm25[todayIndex]
-  const yesterdayAqi = forecastPm25[todayIndex - 1]
   const { max, avg } = todayAqi
-  const { max: yMax, avg: yAvg } = yesterdayAqi
+
   const recent = R.pipe(
     R.map((d: Forecast) => d.avg),
     R.mean,
     Math.round,
   )(forecast.daily.pm25)
+
+  const yesterdayAqi = forecastPm25[todayIndex - 1]
+  const { max: yMax, avg: yAvg } = yesterdayAqi
+
   return {
     value: aqi,
     avg,
     max,
     recent,
     forecastPm25,
+    tomorrow: forecastPm25[todayIndex + 1],
     diffAvg: diff(yAvg, avg),
     diffMax: diff(yMax, max),
   }
@@ -111,7 +115,8 @@ const setAirQualityLevels = () => {
 
 const getAqiStr = (aqi: number) => {
   const targetLevel =
-    AQI_LEVELS.find(level => level.value >= aqi) || AQI_LEVELS[0]
+    AQI_LEVELS.find(level => level.value >= aqi) ||
+    AQI_LEVELS[AQI_LEVELS.length - 1]
   return `${targetLevel.emoji} ${aqi}`
 }
 
@@ -143,7 +148,7 @@ const getCityName = (name: string) => {
       getAqiStr(r.max),
       getDiffStr(r.diffAvg),
       getDiffStr(r.diffMax),
-      getAqiStr(r.recent),
+      getAqiStr(r.tomorrow.max),
       `🌡️ ${r.temperature}°C`,
       `💧 ${r.humidity}%`,
     ].join(),
@@ -156,7 +161,7 @@ const getCityName = (name: string) => {
       'Max',
       'Diff Avg',
       'Diff Max',
-      'Recent 7 Days Avg',
+      'Tomorrow',
       'Temp',
       'Humidity',
     ],

@@ -32,8 +32,9 @@ Set github secrets
 gh secret set EMAIL_USERNAME -b"lkklcozy@gmail.com"
 gh secret set EMAIL_PASSWORD -b""
 
+# Your private API token (see aqicn.org/data-platform/token/)
 gh secret set AIR_QUALITY_API_TOKEN -b""
-gh secret set AIR_QUALITY_CITY_LIST -b""
+gh secret set AIR_QUALITY_CITY_LIST -b"" # []
 ```
 
 Usage
@@ -55,7 +56,6 @@ act --secret-file act.secrets
 
 ## Reference
 
-- [Online ]
 - [gh-action-data-scraping](https://github.com/sw-yx/gh-action-data-scraping)
 
 This repo shows how to use github actions to do automated data scraping, with storage in git itself! free git storage and scheduled updates!!!
