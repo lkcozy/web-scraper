@@ -22,14 +22,23 @@ const {
 
 const cityList = AIR_QUALITY_CITY_LIST?.split(',') || []
 
+const AQI_LEVELS = [
+  { value: 50, label: 'Good', emoji: '🟢' },
+  { value: 100, label: 'Moderate', emoji: '🟡' },
+  { value: 150, label: 'Unhealthy for Sensitive', emoji: '🟠' },
+  { value: 200, label: 'Unhealthy', emoji: '🔴' },
+  { value: 300, label: 'Very Unhealthy', emoji: '🟣' },
+  { value: 301, label: 'Hazardous', emoji: '🟤' },
+]
+
 const diff = (oldVal: number, newVal: number) =>
   (((newVal - oldVal) / oldVal) * 100).toFixed(1)
 
 const getDiffStr = (diff: number) => {
   if (!diff) return 0
 
-  const prefix = diff > 0 ? '⬆️' : '⬇️'
-  return `${prefix} ${diff}%`
+  const prefix = diff > 0 ? '⬆️  🟥' : '⬇️  🟩'
+  return `${prefix}${diff}%`
 }
 
 const getPm25Data = (
@@ -43,7 +52,7 @@ const getPm25Data = (
   )
   const forecastPm25 = forecast.daily.pm25
   const todayAqi = forecastPm25[todayIndex]
-  const { max, avg } = todayAqi
+  const { max, avg } = todayAqi || {}
 
   const recent = R.pipe(
     R.map((d: Forecast) => d.avg),
@@ -52,7 +61,7 @@ const getPm25Data = (
   )(forecast.daily.pm25)
 
   const yesterdayAqi = forecastPm25[todayIndex - 1]
-  const { max: yMax, avg: yAvg } = yesterdayAqi
+  const { max: yMax, avg: yAvg } = yesterdayAqi || {}
 
   return {
     value: aqi,
@@ -96,15 +105,6 @@ const getAirQuality = async (cityName: string) => {
   return currentAirQuality
 }
 
-const AQI_LEVELS = [
-  { value: 50, label: 'Good', emoji: '🟢' },
-  { value: 100, label: 'Moderate', emoji: '🟡' },
-  { value: 150, label: 'Unhealthy for Sensitive', emoji: '🟠' },
-  { value: 200, label: 'Unhealthy', emoji: '🔴' },
-  { value: 300, label: 'Very Unhealthy', emoji: '🟣' },
-  { value: 301, label: 'Hazardous', emoji: '🟤' },
-]
-
 const setAirQualityLevels = () => {
   const levels = AQI_LEVELS.map(
     ({ value, label, emoji }, idx) => `${idx + 1}: ${emoji}${value} ${label}`,
@@ -117,7 +117,7 @@ const getAqiStr = (aqi: number) => {
   const targetLevel =
     AQI_LEVELS.find(level => level.value >= aqi) ||
     AQI_LEVELS[AQI_LEVELS.length - 1]
-  return `${targetLevel.emoji} ${aqi}`
+  return `${targetLevel.emoji}${aqi}`
 }
 
 const capitalize = (s: string | undefined) =>
@@ -130,15 +130,13 @@ const getCityName = (name: string) => {
 
 ;(async () => {
   const result = await Promise.all(cityList.map(city => getAirQuality(city)))
+  const subject = result.map(r => `${getCityName(r.name)}:${getAqiStr(r.avg)}`)
+  core.setOutput('subject', subject.join(';'))
+
   const sortedResultWithAvg = R.sortWith(
     [R.descend(R.prop('avg')), R.ascend(R.prop('name'))],
     result,
   )
-
-  const subject = sortedResultWithAvg
-    .reverse()
-    .map(r => `${getCityName(r.name)}:${getAqiStr(r.avg)}`)
-  core.setOutput('subject', subject.join(';'))
 
   const details = sortedResultWithAvg.map((r, idx) =>
     [
@@ -148,9 +146,9 @@ const getCityName = (name: string) => {
       getAqiStr(r.max),
       getDiffStr(r.diffAvg),
       getDiffStr(r.diffMax),
-      getAqiStr(r.tomorrow.max),
+      `🗓️  ${getAqiStr(r.tomorrow.max)}`,
       `🌡️ ${r.temperature}°C`,
-      `💧 ${r.humidity}%`,
+      `💧${r.humidity}%`,
     ].join(),
   )
   const content = [
