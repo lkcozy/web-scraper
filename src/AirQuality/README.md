@@ -13,7 +13,7 @@ gh secret set AIR_QUALITY_API_TOKEN -b""
 2. Set target city list.
 
 ```sh
-gh secret set AIR_QUALITY_CITY_LIST -b"[shanghai]"
+gh secret set AIR_QUALITY_CITY_LIST -b"london"
 ```
 
 ## [Air Quality Programmatic APIs](https://aqicn.org/json-api/doc/)
