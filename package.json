@@ -11,6 +11,7 @@
     "start:air-quality": "tsc-watch src/AirQuality/index.ts --outDir ./dist/AirQuality --onSuccess \"yarn serve:air-quality\"",
     "start:fang": "tsc-watch src/Fang/index.ts --outDir ./dist/Fang --onSuccess \"yarn serve:fang\"",
     "serve": "yarn node dist/index.js",
+    "serve:air-quality": "yarn node dist/AirQuality/index.js",
     "serve:fang": "yarn node dist/Fang/index.js",
     "build": "tsc",
     "lint": "eslint src --ext .ts",

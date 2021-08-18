@@ -47,4 +47,4 @@ dist
 clean-vscode
 
 *.secrets
-.vscode/settings
+.vscode/settings.json
