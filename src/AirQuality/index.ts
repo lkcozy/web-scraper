@@ -118,7 +118,7 @@ const getCityName = (name: string) => {
 }
 
 ;(async () => {
-  const result = await Promise.all(cityList.map(city => getAirQuality(city)))
+  const result = await Promise.all(cityList.map(getAirQuality))
   const subject = result.map(r => `${getCityName(r.name)}:${getAqiStr(r.avg)}`)
   core.setOutput('subject', subject.join(';'))
 
