@@ -18,7 +18,7 @@
     "format": "prettier --write --loglevel warn",
     "lint:all:format": "yarn format \"**/*.{ts,json,md}\"",
     "prepare": "husky install",
-    "spell-check": "yarn cspell -u --show-suggestions 'src/**/*.ts'"
+    "spell-check": "cspell --unique --no-progress \"**/*.{md,ts,tsx,js,css,less,json,yml,yaml,html,sh}\""
   },
   "dependencies": {
     "@actions/core": "^1.5.0",
@@ -45,7 +45,6 @@
     "husky": "^7.0.0",
     "lint-staged": ">=10",
     "prettier": "^2.3.0",
-    "pretty-quick": "^3.1.0",
     "tsc-watch": "^4.5.0",
     "typescript": "^4.4.0"
   }
