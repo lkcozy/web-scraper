@@ -6,14 +6,13 @@
   "language": "en",
   // words - list of words to be always considered correct
   "words": [
+    "aqicn",
     "iaqi",
     "lkcozy",
-    "aqicn",
-    "networkidle",
+    "loglevel",
     "mrgn",
-
-    // libraries
-    "loglevel"
+    "networkidle",
+    "sonarjs"
   ],
   // list of the names of the dictionaries to use. https://github.com/streetsidesoftware/cspell-dicts
   "dictionaries": [
@@ -40,6 +39,7 @@
     "yarn.lock",
     "coverage/**",
     ".vscode/**",
-    "package.json"
+    "package.json",
+    "LICENSE"
   ]
 }

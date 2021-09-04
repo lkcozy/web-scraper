@@ -86,7 +86,7 @@ const getAirQuality = async (cityName: string) => {
     iaqi: { t, h },
   } = result.data
 
-  const currentAirQuality = {
+  return {
     ...city,
     ...getPm25Data(aqi, time, forecast),
     name: cityName,
@@ -94,7 +94,6 @@ const getAirQuality = async (cityName: string) => {
     temperature: t.v,
     humidity: h.v,
   }
-  return currentAirQuality
 }
 
 const setAirQualityLevels = () => {

@@ -1,10 +1,11 @@
 module.exports = {
   parser: '@typescript-eslint/parser',
-  plugins: ['@typescript-eslint'],
+  plugins: ['@typescript-eslint', 'sonarjs'],
   extends: [
     'airbnb-base',
     'plugin:@typescript-eslint/recommended',
     'plugin:prettier/recommended',
+    'plugin:sonarjs/recommended',
   ],
   rules: {
     'import/extensions': [
