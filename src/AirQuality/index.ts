@@ -9,11 +9,23 @@ import { diff, getDiffStr, capitalize } from '../utils'
 
 dotenv.config()
 
+type NumericValue = { v: number }
+
 type Forecast = {
   max: number
   min: number
   avg: number
   day: string
+}
+
+type ForecastData = { daily: { pm25: Forecast[] } }
+
+type AirQualityData = {
+  aqi: number
+  forecast: ForecastData
+  time: { s: string }
+  city: []
+  iaqi: { t: NumericValue; h: NumericValue }
 }
 
 const {
@@ -36,7 +48,7 @@ const AQI_LEVELS = [
 const getPm25Data = (
   aqi: number,
   time: { s: string },
-  forecast: { daily: { pm25: Forecast[] } },
+  forecast: ForecastData,
 ) => {
   const todayDate = time.s.split(' ')[0]
   const todayIndex = R.findIndex(R.propEq('day', todayDate))(
@@ -67,16 +79,29 @@ const getPm25Data = (
   }
 }
 
-const getAirQuality = async (cityName: string) => {
-  const [error, result] = await to(
-    fetch(
-      `${AIR_QUALITY_API_URL}/${cityName}/?token=${AIR_QUALITY_API_TOKEN}`,
-    ).then(r => r.json()),
+type CityAirQuality = {
+  name: string
+  time: string
+  temperature: number
+  humidity: number
+  avg: number
+  max: number
+  tomorrow: { max: number }
+  diffAvg: number
+  diffMax: number
+  value: number
+}
+
+const getAirQuality = async (cityName: string): Promise<CityAirQuality> => {
+  const [error, result] = await to<AirQualityData>(
+    fetch(`${AIR_QUALITY_API_URL}/${cityName}/?token=${AIR_QUALITY_API_TOKEN}`)
+      .then(r => r.json())
+      .then(r => r.data),
   )
   if (error) {
     logger.error(`fetch ${cityName} aqi failed`, error.message)
   }
-  if (!result?.data) return {}
+  if (!result) return {} as CityAirQuality
 
   const {
     aqi,
@@ -84,7 +109,7 @@ const getAirQuality = async (cityName: string) => {
     forecast,
     city,
     iaqi: { t, h },
-  } = result.data
+  } = result
 
   return {
     ...city,
@@ -118,7 +143,9 @@ const getCityName = (name: string) => {
 
 ;(async () => {
   const result = await Promise.all(cityList.map(getAirQuality))
-  const subject = result.map(r => `${getCityName(r.name)}:${getAqiStr(r.avg)}`)
+  const subject = result
+    .filter(r => r.name)
+    .map(r => `${getCityName(r.name)}:${getAqiStr(r.avg)}`)
   core.setOutput('subject', subject.join(';'))
 
   const sortedResultWithAvg = R.sortWith(
