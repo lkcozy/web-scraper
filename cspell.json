@@ -7,12 +7,14 @@
   // words - list of words to be always considered correct
   "words": [
     "aqicn",
+    "codeql",
     "iaqi",
     "lkcozy",
     "loglevel",
     "mrgn",
     "networkidle",
-    "sonarjs"
+    "sonarjs",
+    "egordm"
   ],
   // list of the names of the dictionaries to use. https://github.com/streetsidesoftware/cspell-dicts
   "dictionaries": [
