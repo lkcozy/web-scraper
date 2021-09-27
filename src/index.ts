@@ -57,6 +57,6 @@ const getContent = async (page: Page, selector: string) =>
     }),
   )
 
-  saveData('content', results.join())
+  saveData('content', results.join(''))
   await browser.close()
 })()

@@ -40,8 +40,7 @@ jobs:
             <!DOCTYPE html>
             <html>
             <body>
-            <h1>We’re currently finalizing most applications we received between</h1>
-            <p>${{steps.check.outputs.content}}</p>
+            ${{steps.check.outputs.content}}
             </body>
             </html>
           to: lkklcozy@gmail.com
