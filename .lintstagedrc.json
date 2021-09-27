@@ -2,6 +2,5 @@
   "*.ts": ["yarn lint", "yarn format"],
   "*.scss": ["yarn format"],
   "{*.json,.*rc}": ["yarn format --parser json"],
-  "*.md": ["yarn format"],
-  "*": ["yarn spell-check"]
+  "*.md": ["yarn format"]
 }
