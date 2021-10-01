@@ -21,7 +21,7 @@
     "spell-check": "cspell --unique --no-progress \"**/*.{md,ts,tsx,js,css,less,json,yml,yaml,html,sh}\""
   },
   "dependencies": {
-    "@actions/core": "^1.5.0",
+    "@actions/core": "^1.6.0",
     "await-to-js": "^3.0.0",
     "dotenv": "^10.0.0",
     "loglevel": "^1.7.1",
