@@ -36,7 +36,7 @@ gh secret set EMAIL_PASSWORD -b""
 
 # Your private API token (see aqicn.org/data-platform/token/)
 gh secret set AIR_QUALITY_API_TOKEN -b""
-gh secret set AIR_QUALITY_CITY_LIST -b"" # []
+gh secret set AIR_QUALITY_CITY_LIST -b"" # a,b,c
 ```
 
 Usage
