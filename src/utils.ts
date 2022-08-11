@@ -1,4 +1,4 @@
-export const getDiffStr = (diff: number): string => {
+export const getDiffStr = (diff?: number): string => {
   if (!diff) return '0'
 
   const prefix = diff > 0 ? '⬆️  🟥' : '⬇️  🟩'

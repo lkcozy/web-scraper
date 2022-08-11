@@ -81,15 +81,15 @@ const getPm25Data = (
 
 type CityAirQuality = {
   name: string
-  time: string
+  time?: string
   temperature: number
   humidity: number
+  value?: number
   avg: number
-  max: number
-  tomorrow: { max: number }
-  diffAvg: number
-  diffMax: number
-  value: number
+  max?: number
+  tomorrow?: { max: number }
+  diffAvg?: number
+  diffMax?: number
 }
 
 const getAirQuality = async (cityName: string): Promise<CityAirQuality> => {
@@ -112,8 +112,9 @@ const getAirQuality = async (cityName: string): Promise<CityAirQuality> => {
   } = result
 
   return {
+    avg: 0,
     ...city,
-    ...getPm25Data(aqi, time, forecast),
+    ...(time.s && getPm25Data(aqi, time, forecast)),
     name: cityName,
     time: time.s,
     temperature: t.v,
@@ -129,7 +130,9 @@ const setAirQualityLevels = () => {
   core.setOutput('levels', levels)
 }
 
-const getAqiStr = (aqi: number) => {
+const getAqiStr = (aqi?: number) => {
+  if (!aqi) return 'N/A'
+
   const targetLevel =
     AQI_LEVELS.find(level => level.value >= aqi) ||
     AQI_LEVELS[AQI_LEVELS.length - 1]
@@ -159,7 +162,7 @@ const getCityName = (name: string) => {
       getAqiStr(r.value),
       getAqiStr(r.avg),
       getAqiStr(r.max),
-      `🗓️  ${getAqiStr(r.tomorrow.max)}`,
+      `🗓️  ${getAqiStr(r.tomorrow?.max)}`,
       getDiffStr(r.diffAvg),
       getDiffStr(r.diffMax),
       `🌡️ ${r.temperature}°C`,
