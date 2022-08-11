@@ -5,7 +5,7 @@
 
   <p>
     <a>
-      <img src="https://img.shields.io/github/package-json/v/lkcozy/code-notes" alt="Current version." />
+      <img src="https://img.shields.io/github/package-json/v/lkcozy/web-scraper" alt="Current version." />
     </a>
     <a href="#" target="_blank">
         <img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-green.svg" />
@@ -58,10 +58,6 @@ act --secret-file act.secrets
 
 ## Reference
 
-- [gh-action-data-scraping](https://github.com/sw-yx/gh-action-data-scraping)
-
-This repo shows how to use github actions to do automated data scraping, with storage in git itself! free git storage and scheduled updates!!!
-
+- [gh-action-data-scraping](https://github.com/sw-yx/gh-action-data-scraping): This repo shows how to use github actions to do automated data scraping, with storage in git itself! free git storage and scheduled updates!!!
 - [Puppeteer](https://github.com/puppeteer/puppeteer): Puppeteer is a tool to manipulate web page by using headless Chrome.
-
 - [Setting up a typescript project in 2021](https://dev.to/avalon-lab/setting-up-a-typescript-project-in-2021-4cfg): This post will describe how to create a project in typescript from scratch. The final project include some basic code, tests, commit hooks to enforce code formatting, automatic tests on push and more. [Source Code](https://github.com/xiorcal/ts-demo)
