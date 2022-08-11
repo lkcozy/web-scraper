@@ -24,14 +24,14 @@
 
 Install github cli
 
-```sh
+```zsh
 brew install gh
 ```
 
 Set github secrets
 
-```sh
-gh secret set EMAIL_USERNAME -b"lkklcozy@gmail.com"
+```zsh
+gh secret set EMAIL_USERNAME -b""
 gh secret set EMAIL_PASSWORD -b""
 
 # Your private API token (see aqicn.org/data-platform/token/)
@@ -41,18 +41,18 @@ gh secret set AIR_QUALITY_CITY_LIST -b"" # a,b,c
 
 Usage
 
-```sh
+```zsh
 yarn install
 yarn watch
 ```
 
 [Test GitHub Actions locally](https://lkcozy.github.io/code-notes/git/github-actions#test-github-actions-locally)
 
-```sh
+```zsh
 brew install act
 ```
 
-```sh
+```zsh
 act --secret-file act.secrets
 ```
 
