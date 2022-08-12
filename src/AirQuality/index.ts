@@ -1,11 +1,10 @@
 import fetch from 'node-fetch'
-import to from 'await-to-js'
 import * as dotenv from 'dotenv'
 import * as R from 'ramda'
 import * as core from '@actions/core'
-import logger from 'loglevel'
 
-import { diff, getDiffStr, capitalize } from '../utils'
+// eslint-disable-next-line import/no-unresolved
+import { diff, getDiffStr, capitalize } from '../utils.js'
 
 dotenv.config()
 
@@ -93,14 +92,12 @@ type CityAirQuality = {
 }
 
 const getAirQuality = async (cityName: string): Promise<CityAirQuality> => {
-  const [error, result] = await to<AirQualityData>(
-    fetch(`${AIR_QUALITY_API_URL}/${cityName}/?token=${AIR_QUALITY_API_TOKEN}`)
-      .then(r => r.json())
-      .then(r => r.data),
+  const result = await fetch(
+    `${AIR_QUALITY_API_URL}/${cityName}/?token=${AIR_QUALITY_API_TOKEN}`,
   )
-  if (error) {
-    logger.error(`fetch ${cityName} aqi failed`, error.message)
-  }
+    .then(r => r.json() as Promise<{ data: AirQualityData }>)
+    .then(r => r.data)
+
   if (!result) return {} as CityAirQuality
 
   const {

@@ -1,5 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import fetch from 'node-fetch'
-import to from 'await-to-js'
 import * as dotenv from 'dotenv'
 import * as R from 'ramda'
 
@@ -15,18 +15,15 @@ type Project = {
 const {
   FANG_API_URL = 'https://fangjia.fang.com/fangjia/common/ajaxtrenddata',
   FANG_PROJECT_CONFIGS = [
-    { city: 'nb', cityName: '宁波', project: '', projectName: ' 在水一方' },
-    { city: 'wuhan', cityName: '宁波', project: '', projectName: ' 长城嘉苑' },
+    { city: '', cityName: '', project: '', projectName: '' },
+    { city: '', cityName: '', project: '', projectName: '' },
   ],
 } = process.env
 
 const fetchCity = async (city: string) => {
-  const [error, result] = await to(
-    fetch(`${FANG_API_URL}/${city}/`)
-      .then(r => r.text() || '')
-      .then(d => JSON.parse(d.split('&')?.[0])),
-  )
-  console.log('result: ', result)
+  const result = await fetch(`${FANG_API_URL}/${city}/`)
+    .then(r => r.text() || '')
+    .then(d => JSON.parse(d.split('&')?.[0]))
 }
 
 const fetchCities = async (cites: string[]) => {
@@ -36,8 +33,8 @@ const fetchCities = async (cites: string[]) => {
 ;(async () => {
   const projects = FANG_PROJECT_CONFIGS as Project[]
   const cityList = R.pipe(R.map(R.prop('city')), R.uniq)(projects)
-  console.log('cityList: ', cityList)
+  // console.log('cityList: ', cityList)
   const projectsGroupByCity = R.groupBy(R.prop('city'), projects)
-  console.log('projectsGroupByCity: ', projectsGroupByCity)
+  // console.log('projectsGroupByCity: ', projectsGroupByCity)
   fetchCities(cityList)
 })()
