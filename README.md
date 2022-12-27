@@ -46,6 +46,7 @@ Usage
 
 ```zsh
 yarn install
+yarn build
 yarn watch
 ```
 

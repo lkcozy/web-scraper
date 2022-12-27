@@ -51,3 +51,5 @@ jobs:
             </html>
           to: lkklcozy@gmail.com
           from: github-actions-update
+      # using the workflow with default settings https://github.com/marketplace/actions/keepalive-workflow
+      - uses: gautamkrishnar/keepalive-workflow@v1 
