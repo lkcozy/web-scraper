@@ -37,12 +37,16 @@ gh secret set EMAIL_PASSWORD -b""
 # Your private API token (see aqicn.org/data-platform/token/)
 gh secret set AIR_QUALITY_API_TOKEN -b""
 gh secret set AIR_QUALITY_CITY_LIST -b"" # a,b,c
+
+# https://github.com/KanHarI/gpt-commit-summarizer
+gh secret set OPENAI_API_KEY -b""
 ```
 
 Usage
 
 ```zsh
 yarn install
+yarn build
 yarn watch
 ```
 
@@ -61,3 +65,4 @@ act --secret-file act.secrets
 - [gh-action-data-scraping](https://github.com/sw-yx/gh-action-data-scraping): This repo shows how to use github actions to do automated data scraping, with storage in git itself! free git storage and scheduled updates!!!
 - [Puppeteer](https://github.com/puppeteer/puppeteer): Puppeteer is a tool to manipulate web page by using headless Chrome.
 - [Setting up a typescript project in 2021](https://dev.to/avalon-lab/setting-up-a-typescript-project-in-2021-4cfg): This post will describe how to create a project in typescript from scratch. The final project include some basic code, tests, commit hooks to enforce code formatting, automatic tests on push and more. [Source Code](https://github.com/xiorcal/ts-demo)
+- [Automatic Commit Summaries Using OpenAI’s Language Model](https://betterprogramming.pub/leverage-openais-language-model-for-automated-commit-summaries-8181cef30375)
