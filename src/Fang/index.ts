@@ -17,17 +17,18 @@ const {
   FANG_PROJECT_CONFIGS = [
     { city: '', cityName: '', project: '', projectName: '' },
     { city: '', cityName: '', project: '', projectName: '' },
+    { city: '', cityName: '', project: '', projectName: '' },
   ],
 } = process.env
 
 const fetchCity = async (city: string) => {
-  const result = await fetch(`${FANG_API_URL}/${city}/`)
+  return fetch(`${FANG_API_URL}/${city}/`)
     .then(r => r.text() || '')
     .then(d => JSON.parse(d.split('&')?.[0]))
 }
 
 const fetchCities = async (cites: string[]) => {
-  const result = await Promise.all(cites.map(fetchCity))
+  return Promise.all(cites.map(fetchCity))
 }
 
 ;(async () => {
@@ -37,4 +38,5 @@ const fetchCities = async (cites: string[]) => {
   const projectsGroupByCity = R.groupBy(R.prop('city'), projects)
   // console.log('projectsGroupByCity: ', projectsGroupByCity)
   fetchCities(cityList)
+  return projectsGroupByCity
 })()
