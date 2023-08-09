@@ -1,4 +1,4 @@
-name: Code Review
+name: 🔍 Code Review
 
 permissions:
   contents: read
@@ -6,7 +6,7 @@ permissions:
 
 on:
   pull_request:
-    types: [opened, reopened]
+    types: [opened, reopened, ready_for_review]
 
 jobs:
   test:
