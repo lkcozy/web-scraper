@@ -19,7 +19,7 @@ jobs:
       - name: 🔍 Fetch Eligible PRs
         run: |
           # example start_datetime="2021-01-01T19:00:00Z"
-          start_datetime=$(date -d "700 days ago" "+%Y-%m-%dT%H:%M:%SZ")
+          start_datetime=$(date -d "7 days ago" "+%Y-%m-%dT%H:%M:%SZ")
           echo $start_datetime
           search_query="is:pr merged:>$start_datetime -author:app/dependabot"
           merged_prs=$(
