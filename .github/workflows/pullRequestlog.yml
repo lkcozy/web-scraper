@@ -3,7 +3,7 @@ name: 📝 Update Pull Requests Log
 
 on:
   schedule:
-    - cron: '0 10 * * *' # At 12:00 MST on Wednesday https://crontab.guru/
+    - cron: '0 12 * * 3' # At 12:00 MST on Wednesday https://crontab.guru/
 
 jobs:
   pr_log:
@@ -21,6 +21,7 @@ jobs:
           start_datetime=$(date -d "7 days ago" "+%Y-%m-%dT%H:%M:%SZ")
           echo $start_datetime
           base="main"
+          search_query="is:pr merged:>$start_datetime -author:app/dependabot"
           merged_prs=$(
             gh pr list \
               --base $base \
@@ -36,8 +37,7 @@ jobs:
       - name: 📝 Update PRs Log
         if: ${{ env.merged_prs }}
         run: |
-          pr_log_name=$PR_LOG_NAME
-          echo "2 $pr_log_name"
+          pr_log_name=$pr_log_name
           temp_file_name="temp"
           if [ ! -f $pr_log_name ]; then
               touch $pr_log_name
