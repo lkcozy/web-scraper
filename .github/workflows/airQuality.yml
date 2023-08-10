@@ -1,4 +1,4 @@
-name:  🦠 Check Air Quality
+name: 🦠 Check Air Quality
 
 on:
   schedule:
@@ -52,4 +52,4 @@ jobs:
           to: lkklcozy@gmail.com
           from: github-actions-update
       # using the workflow with default settings https://github.com/marketplace/actions/keepalive-workflow
-      - uses: gautamkrishnar/keepalive-workflow@v1 
+      - uses: gautamkrishnar/keepalive-workflow@v1

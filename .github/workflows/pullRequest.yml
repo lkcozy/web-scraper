@@ -1,11 +1,9 @@
 name: 📝 Update Pull Requests Log
+# This workflow search for all pull requests (PRs) and add them to a Pull Requests Log file. The changes are then committed and pushed back to the repository.
 
 on:
-  push:
-    branches:
-      - main
   schedule:
-    - cron: '0 10 * * 4' # At 12:00 MST on Wednesday https://crontab.guru/
+    - cron: '0 10 * * *' # At 12:00 MST on Wednesday https://crontab.guru/
 
 jobs:
   pr_log:
@@ -20,7 +18,7 @@ jobs:
       - name: 🔍 Fetch Eligible PRs
         run: |
           # example start_datetime="2021-01-01T19:00:00Z"
-          start_datetime=$(date -d "12 months ago" "+%Y-%m-%dT%H:%M:%SZ")
+          start_datetime=$(date -d "7 days ago" "+%Y-%m-%dT%H:%M:%SZ")
           echo $start_datetime
           base="main"
           merged_prs=$(
