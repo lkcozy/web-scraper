@@ -33,7 +33,7 @@ const {
   AIR_QUALITY_CITY_LIST,
 } = process.env
 
-const cityList = AIR_QUALITY_CITY_LIST?.split(',') || []
+const cityList = AIR_QUALITY_CITY_LIST?.split(',') ?? []
 
 const AQI_LEVELS = [
   { value: 50, label: 'Good', emoji: '🟢' },

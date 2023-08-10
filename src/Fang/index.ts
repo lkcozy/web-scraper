@@ -32,11 +32,9 @@ const fetchCities = async (cites: string[]) => {
 }
 
 ;(async () => {
-  const projects = FANG_PROJECT_CONFIGS as Project[]
-  const cityList = R.pipe(R.map(R.prop('city')), R.uniq)(projects)
-  // console.log('cityList: ', cityList)
-  const projectsGroupByCity = R.groupBy(R.prop('city'), projects)
-  // console.log('projectsGroupByCity: ', projectsGroupByCity)
-  fetchCities(cityList)
-  return projectsGroupByCity
+  // const projects = FANG_PROJECT_CONFIGS as Project[]
+  // const cityList = R.pipe(R.map(R.prop('city')), R.uniq)(projects)
+  // const projectsGroupByCity = R.groupBy(R.prop('city'), projects)
+  // fetchCities(cityList )
+  // return projectsGroupByCity
 })()
