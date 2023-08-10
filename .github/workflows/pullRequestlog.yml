@@ -2,6 +2,9 @@ name: 📝 Update Pull Requests Log
 # This workflow search for all pull requests (PRs) and add them to a Pull Requests Log file. The changes are then committed and pushed back to the repository.
 
 on:
+  push:
+    branches:
+      - main
   schedule:
     - cron: '0 12 * * 3' # At 12:00 MST on Wednesday https://crontab.guru/
 
@@ -10,7 +13,8 @@ jobs:
     runs-on: ubuntu-latest
     env:
       TZ: 'America/Edmonton'
-      PR_LOG_NAME: pullrequestlog.md
+      PR_LOG_NAME: PULLREQUESTLOG.md
+      BASE_BRANCH: main
     steps:
       - name: Checkout Repository
         uses: actions/checkout@main
@@ -18,13 +22,12 @@ jobs:
       - name: 🔍 Fetch Eligible PRs
         run: |
           # example start_datetime="2021-01-01T19:00:00Z"
-          start_datetime=$(date -d "7 days ago" "+%Y-%m-%dT%H:%M:%SZ")
+          start_datetime=$(date -d "700 days ago" "+%Y-%m-%dT%H:%M:%SZ")
           echo $start_datetime
-          base="main"
           search_query="is:pr merged:>$start_datetime -author:app/dependabot"
           merged_prs=$(
             gh pr list \
-              --base $base \
+              --base $BASE_BRANCH \
               --search "$search_query" \
               --json author,title,url \
               --jq '.[]'
@@ -37,7 +40,7 @@ jobs:
       - name: 📝 Update PRs Log
         if: ${{ env.merged_prs }}
         run: |
-          pr_log_name=$pr_log_name
+          pr_log_name=$PR_LOG_NAME
           temp_file_name="temp"
           if [ ! -f $pr_log_name ]; then
               touch $pr_log_name
@@ -58,13 +61,15 @@ jobs:
           mv $temp_file_name $pr_log_name
 
           echo "commit_required=true" >> "$GITHUB_ENV"
+          echo "$commit_required"
 
       - name: 🚀 Commit and Push Changes
         if: ${{ env.commit_required == 'true' }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git commit -am "Update Pull Request Log Test"
+          git add $PR_LOG_NAME
+          git commit -m "Update Pull Request Log Test"
           git push
         env:
           GH_TOKEN: ${{ github.token }}
