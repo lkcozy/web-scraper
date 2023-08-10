@@ -10,7 +10,7 @@
     <a href="#" target="_blank">
         <img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-green.svg" />
     </a>
-       <img src="https://github.com/lkcozy/web-scraper/actions/workflows/codeql.yml/badge.svg" alt="🖨️ GitHub CodeQL Scanning" />
+        <img src="https://github.com/lkcozy/web-scraper/actions/workflows/pullRequestlog.yml/badge.svg?branch=main" alt="📝 Update Pull Requests Log" />
         <img src="https://github.com/lkcozy/web-scraper/actions/workflows/checkUpdats.yml/badge.svg?branch=main" alt="🔎 Check Updates" />
         <img src="https://github.com/lkcozy/web-scraper/actions/workflows/airQuality.yml/badge.svg" alt="🔎 Check Air Quality" />
     <a href="https://github.dev/lkcozy/web-scraper" target="_blank">
