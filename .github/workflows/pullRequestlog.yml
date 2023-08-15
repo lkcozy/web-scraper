@@ -16,6 +16,8 @@ jobs:
       PR_LOG_PATH: docs
       PR_LOG_NAME: PULLREQUESTLOG.md
       BASE_BRANCH: main
+      REVIEWERS: lkcozy
+      LABELS: weeklyreport,doc
     steps:
       - name: Checkout Repository
         uses: actions/checkout@main
@@ -70,9 +72,8 @@ jobs:
           mv $temp_file_name $pr_log_name
 
           echo "commit_required=true" >> "$GITHUB_ENV"
-          echo "$commit_required"
 
-      - name: 🚀 Commit and Push Changes
+      - name: ⌨️ Commit and Push Changes
         if: ${{ env.commit_required == 'true' }}
         run: |
           weekno=$(date +'%Y-%V')
@@ -82,8 +83,29 @@ jobs:
           git config user.email "weekly-report[bot]@noreply.github.com"
           git add "$PR_LOG_PATH/$PR_LOG_NAME"
           git commit -m "docs: update weekly prs report $weekno"
-          git push origin $branch
+          git push origin $branches
 
-          gh pr create --title "Update Weekly Pull Requests Report" --body "$report_contents"
+          echo "weekno=$weekno" >> "$GITHUB_ENV"
+
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: 🚀 Create
+        if: ${{ env.weekno }}
+        run: |
+          # Generate the gh pr create command with reviewers and labels
+          command="gh pr create --title "[$weekno] Update Weekly Pull Requests Report" --body "$report_contents"
+
+          for reviewer in "${REVIEWERS[@]}"; do
+            command+=" --reviewer $reviewer"
+          done
+
+          for label in "${LABELS[@]}"; do
+            command+=" --label $label"
+          done
+
+          echo $command
+          eval "$command"
+
         env:
           GH_TOKEN: ${{ github.token }}
