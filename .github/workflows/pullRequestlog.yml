@@ -6,7 +6,7 @@ on:
     branches:
       - '*'
   schedule:
-    - cron: '0 9 * * 1' # At 12:00 MST on Wednesday https://crontab.guru/
+    - cron: '53 11 * * *' # At 12:00 MST on Wednesday https://crontab.guru/
 
 jobs:
   pr_log:
@@ -93,7 +93,7 @@ jobs:
       - name: 🚀 Generate The PR With Reviewers And Labels
         if: ${{ env.weekno }}
         run: |
-          command="gh pr create --title '[$weekno] Update Weekly Pull Requests Report' --body '$report_contents'"
+          command="gh pr create --title '[WEEKLYREPORT] $weekno' --body '$report_contents'"
 
           for reviewer in "${REVIEWERS[@]}"; do
             command+=" --reviewer $reviewer"
