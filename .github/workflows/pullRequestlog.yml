@@ -2,11 +2,8 @@
 name: 📝 Update Pull Requests Log
 
 on:
-  push:
-    branches:
-      - '*'
-  # schedule:
-  #   - cron: '53 12 * * 1' # At 12:00 MST on Wednesday https://crontab.guru/
+  schedule:
+    - cron: '0 9 * * 1' # At 12:00 MST on Wednesday https://crontab.guru/
 
 jobs:
   pr_log:
