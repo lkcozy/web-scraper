@@ -2,6 +2,9 @@
 name: 📝 Update Pull Requests Log
 
 on:
+  push:
+    branches:
+      - '*'
   schedule:
     - cron: '0 9 * * 1' # At 12:00 MST on Wednesday https://crontab.guru/
 
@@ -10,6 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       TZ: 'America/Edmonton'
+      PR_LOG_PATH: docs
       PR_LOG_NAME: PULLREQUESTLOG.md
       BASE_BRANCH: main
     steps:
@@ -38,11 +42,12 @@ jobs:
         run: |
           prs=$(echo "$merged_prs" | jq -c '.[]')
           echo "$prs"
-          pr_log_name=$PR_LOG_NAME
+
+          pr_log_name="$PR_LOG_PATH/$PR_LOG_NAME"
           temp_file_name="temp"
-          if [ ! -f $pr_log_name ]; then
-              touch $pr_log_name
-          fi
+
+          mkdir -p "$PR_LOG_PATH"
+          touch "$pr_log_name"
 
           echo -e "$(date +'## %Y-%m-%d (Week %V)')\n" >$temp_file_name
           counter=1
@@ -54,6 +59,12 @@ jobs:
               ((counter++))
           done <<<"$prs"
 
+          {
+          echo 'report_contents<<EOF'
+          cat $temp_file_name
+            echo EOF
+          } >> "$GITHUB_ENV"
+
           echo -e "" >>$temp_file_name
           cat $pr_log_name >>$temp_file_name
           mv $temp_file_name $pr_log_name
@@ -64,10 +75,15 @@ jobs:
       - name: 🚀 Commit and Push Changes
         if: ${{ env.commit_required == 'true' }}
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add $PR_LOG_NAME
-          git commit -m "Update Pull Request Log Test"
-          git push
+          weekno=$(date +'%Y-%V')
+          branch="weekly-report-$weekno"
+          git checkout -b $branch
+          git config user.name "weekly-report[bot]"
+          git config user.email "weekly-report[bot]@noreply.github.com"
+          git add "$PR_LOG_PATH/$PR_LOG_NAME"
+          git commit -m "docs: update weekly prs report $weekno"
+          git push origin $branch
+
+          gh pr create --title "Update Weekly Pull Requests Report" --body "$report_contents"
         env:
           GH_TOKEN: ${{ github.token }}

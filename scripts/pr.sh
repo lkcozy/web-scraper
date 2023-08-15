@@ -1,6 +1,6 @@
 #!/bin/bash
 
-pr_log_name="PULLREQUESTLOG.md"
+pr_log_name="docs/PULLREQUESTLOG.md"
 temp_file_name="temp"
 start_datetime="2020-08-03T11:38:25Z"
 base="main"
