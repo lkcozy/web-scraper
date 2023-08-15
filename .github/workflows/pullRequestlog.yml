@@ -5,8 +5,8 @@ on:
   push:
     branches:
       - '*'
-  schedule:
-    - cron: '53 11 * * *' # At 12:00 MST on Wednesday https://crontab.guru/
+  # schedule:
+  #   - cron: '53 12 * * 1' # At 12:00 MST on Wednesday https://crontab.guru/
 
 jobs:
   pr_log:
@@ -15,27 +15,37 @@ jobs:
       TZ: 'America/Edmonton'
       PR_LOG_PATH: docs
       PR_LOG_NAME: PULLREQUESTLOG.md
-      BASE_BRANCH: main
       REVIEWERS: lkcozy
       LABELS: weeklyreport,documentation
+      IGNORE_AUTHORS: app/github-actions,app/dependabot
     steps:
       - name: Checkout Repository
         uses: actions/checkout@main
 
       - name: 🔍 Fetch Eligible PRs
         run: |
-          # example start_datetime="2021-01-01T19:00:00Z"
+          # example start_datetime="2023-01-01T19:00:00Z"
           start_datetime=$(date -d "7 days ago" "+%Y-%m-%dT%H:%M:%SZ")
-          echo $start_datetime
-          search_query="is:pr merged:>$start_datetime -author:app/dependabot"
+          echo "start datetime: $start_datetime"
+
+          search_query="is:pr merged:>$start_datetime"
+          for ignore_author in "${IGNORE_AUTHORS[@]}"; do
+              search_query+=" -author:$ignore_author"
+          done
+
+          echo "search query: $search_query"
+
+          base=$(gh repo view --json defaultBranchRef --jq .defaultBranchRef.name)
+          echo "default branch: $base"
+
           merged_prs=$(
             gh pr list \
-              --base $BASE_BRANCH \
+              --base "$base" \
               --search "$search_query" \
               --json author,title,url \
           )
           echo "merged_prs=$merged_prs" >> "$GITHUB_ENV"
-          echo "$merged_prs"
+          echo "eligible prs: $merged_prs"
         env:
           GH_TOKEN: ${{ github.token }}
 
@@ -43,8 +53,6 @@ jobs:
         if: ${{ env.merged_prs }}
         run: |
           prs=$(echo "$merged_prs" | jq -c '.[]')
-          echo "$prs"
-
           pr_log_name="$PR_LOG_PATH/$PR_LOG_NAME"
           temp_file_name="temp"
 
@@ -93,17 +101,17 @@ jobs:
       - name: 🚀 Generate The PR With Reviewers And Labels
         if: ${{ env.weekno }}
         run: |
-          command="gh pr create --title '[WEEKLYREPORT] $weekno' --body '$report_contents'"
+          command="gh pr create --title '[WEEKLYREPORT] $weekno' --body '$report_contents' --reviewer $REVIEWERS --label $LABELS"
 
-          for reviewer in "${REVIEWERS[@]}"; do
-            command+=" --reviewer $reviewer"
-          done
+          # for reviewer in "${REVIEWERS[@]}"; do
+          #   command+=" --reviewer $reviewer"
+          # done
 
-          for label in "${LABELS[@]}"; do
-            command+=" --label $label"
-          done
+          # for label in "${LABELS[@]}"; do
+          #   command+=" --label $label"
+          # done
 
-          echo $command
+          echo "create pr command: $command"
           eval "$command"
 
         env:
