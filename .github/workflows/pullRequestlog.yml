@@ -3,13 +3,12 @@ name: 📝 Update Pull Requests Log
 
 on:
   schedule:
-    - cron: '0 9 * * 1' # At 12:00 MST on Wednesday https://crontab.guru/
+    - cron: '0 16 * * 4' # At 12:00 MST on Wednesday https://crontab.guru/
 
 jobs:
   pr_log:
     runs-on: ubuntu-latest
     env:
-      TZ: 'America/Edmonton'
       PR_LOG_PATH: docs
       PR_LOG_NAME: PULLREQUESTLOG.md
       REVIEWERS: lkcozy
@@ -100,14 +99,6 @@ jobs:
         if: ${{ env.weekno }}
         run: |
           command="gh pr create --title '[WEEKLYREPORT] $weekno' --body '$report_contents' --reviewer $REVIEWERS --label $LABELS"
-
-          # for reviewer in "${REVIEWERS[@]}"; do
-          #   command+=" --reviewer $reviewer"
-          # done
-
-          # for label in "${LABELS[@]}"; do
-          #   command+=" --label $label"
-          # done
 
           echo "create pr command: $command"
           eval "$command"
