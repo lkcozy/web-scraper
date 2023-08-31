@@ -2,6 +2,7 @@
 name: 📝 Update Pull Requests Log
 
 on:
+  workflow_dispatch:
   schedule:
     - cron: '0 17 * * 4' # At 12:00 MST on Wednesday https://crontab.guru/
 
@@ -21,11 +22,15 @@ jobs:
       - name: 🔍 Fetch Eligible PRs
         run: |
           # example start_datetime="2023-01-01T19:00:00Z"
-          start_datetime=$(date -d "7 days ago" "+%Y-%m-%dT%H:%M:%SZ")
+          start_datetime=$(date -d "70 days ago" "+%Y-%m-%dT%H:%M:%SZ")
           echo "start datetime: $start_datetime"
 
           # only the last author flag will be used
-          search_query="is:pr merged:>$start_datetime -author:app/dependabot"
+          search_query="is:pr merged:>$start_datetime"
+          for ignore_author in "${ignore_authors[@]}"; do
+              echo "$ignore_author"
+              search_query+=" -author:$ignore_author"
+          done
 
           echo "search query: $search_query"
 
