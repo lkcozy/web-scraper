@@ -2,6 +2,7 @@
 name: 📝 Update Pull Requests Log
 
 on:
+  workflow_dispatch:
   schedule:
     - cron: '0 17 * * 4' # At 12:00 MST on Wednesday https://crontab.guru/
 
