@@ -3,7 +3,7 @@ name: 📝 Update Pull Requests Log
 
 on:
   schedule:
-    - cron: '0 16 * * 4' # At 12:00 MST on Wednesday https://crontab.guru/
+    - cron: '0 17 * * 4' # At 12:00 MST on Wednesday https://crontab.guru/
 
 jobs:
   pr_log:
@@ -44,7 +44,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
 
       - name: 📝 Update PRs Log
-        if: ${{ env.merged_prs }}
+        if: ${{ env.merged_prs != '[]' }}
         run: |
           prs=$(echo "$merged_prs" | jq -c '.[]')
           pr_log_name="$PR_LOG_PATH/$PR_LOG_NAME"

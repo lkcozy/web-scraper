@@ -6,7 +6,7 @@ export const getDiffStr = (diff?: number): string => {
 }
 
 export const diff = (oldVal: number, newVal: number): number =>
-  +(((newVal - oldVal) / oldVal) * 100).toFixed(1)
+  +(((newVal - oldVal) / oldVal) * 100).toFixed(2)
 
 export const capitalize = (s: string | undefined): string | undefined =>
   s && s[0].toUpperCase() + s.slice(1)
