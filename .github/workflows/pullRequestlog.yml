@@ -2,6 +2,7 @@
 name: 📝 Update Pull Requests Log
 
 on:
+  workflow_dispatch:
   schedule:
     - cron: '0 17 * * 4' # At 12:00 MST on Wednesday https://crontab.guru/
 
@@ -25,7 +26,11 @@ jobs:
           echo "start datetime: $start_datetime"
 
           # only the last author flag will be used
-          search_query="is:pr merged:>$start_datetime -author:app/dependabot"
+          search_query="is:pr merged:>$start_datetime"
+          for ignore_author in "${IGNORE_AUTHORS[@]}"; do
+              echo "$ignore_author"
+              search_query+=" -author:$ignore_author"
+          done
 
           echo "search query: $search_query"
 
@@ -57,9 +62,6 @@ jobs:
           counter=1
           while read -r line; do
               author=$(echo "$line" | jq -r '.author.login')
-              if [[ "${IGNORE_AUTHORS[*]}" == *"$author"* ]]; then
-                  continue
-              fi
               title=$(echo "$line" | jq -r '.title')
               url=$(echo "$line" | jq -r '.url')
               echo "$counter. [$title]($url) @$author" >>$temp_file_name
