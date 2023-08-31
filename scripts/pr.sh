@@ -2,16 +2,16 @@
 
 pr_log_name="docs/PULLREQUESTLOG.md"
 temp_file_name="temp"
-start_datetime="2023-08-07T11:38:25Z"
+start_datetime="2023-01-07T11:38:25Z"
 base=$(gh repo view --json defaultBranchRef --jq .defaultBranchRef.name)
 echo "default branch: $base"
 ignore_authors=("app/github-actions" "app/dependabot")
-search_query="is:pr merged:>$start_datetime -author:app/dependabot"
+search_query="is:pr merged:>$start_datetime"
 
-# for ignore_author in "${ignore_authors[@]}"; do
-#     echo "$ignore_author"
-#     search_query+=" -author:$ignore_author"
-# done
+for ignore_author in "${ignore_authors[@]}"; do
+    echo "$ignore_author"
+    search_query+=" -author:$ignore_author"
+done
 
 echo "search_query: $search_query"
 
