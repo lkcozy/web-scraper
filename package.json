@@ -1,6 +1,6 @@
 {
   "name": "web-scraper",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "main": "index.ts",
   "repository": "git@github.com:lkcozy/web-scraper.git",
   "author": "lkcozy<lkklcozy@gmail.com>",
@@ -55,7 +55,7 @@
   },
   "engines": {
     "yarn": ">=1",
-    "node": ">=16",
+    "node": ">=18",
     "npm": "please-use-yarn"
   },
   "engineStrict": true

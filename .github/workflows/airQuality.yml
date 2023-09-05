@@ -1,6 +1,7 @@
 name: 🦠 Check Air Quality
 
 on:
+  workflow_dispatch:
   schedule:
     - cron: '0 15 * * *' # https://crontab.guru/
 

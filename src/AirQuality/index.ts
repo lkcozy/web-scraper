@@ -69,7 +69,7 @@ const getPm25Data = (
     avg,
     max,
     recent,
-    forecastPm25,
+    forecastPm25: R.drop(2, forecastPm25),
     tomorrow: forecastPm25[todayIndex + 1],
     diffAvg: diff(yAvg, avg),
     diffMax: diff(yMax, max),
@@ -87,6 +87,7 @@ type CityAirQuality = {
   tomorrow?: { max: number }
   diffAvg?: number
   diffMax?: number
+  forecastPm25?: Forecast[]
 }
 
 const getAirQuality = async (cityName: string): Promise<CityAirQuality> => {
@@ -139,11 +140,19 @@ const getCityName = (name: string) => {
   return capitalize(lastName?.split('-')[0])
 }
 
+const getForecastPm25Str = (forecastPm25: Forecast[] = []): string => {
+  return forecastPm25
+    .map(f => {
+      return getAqiStr(f.avg)
+    })
+    .join(',')
+}
+
 ;(async () => {
   const result = await Promise.all(cityList.map(getAirQuality))
   const subject = result
     .filter(r => r.name)
-    .map(r => `${getCityName(r.name)}:${getAqiStr(r.avg)}`)
+    .map(r => `${getCityName(r.name)}${getAqiStr(r.avg)}`)
   core.setOutput('subject', subject.join(';'))
 
   const sortedResultWithAvg = R.sortWith(
@@ -157,11 +166,11 @@ const getCityName = (name: string) => {
     'Now',
     'Avg',
     'Max',
-    '🗓️Tomorrow',
     'Diff Avg',
     'Diff Max',
     '🌡️Temp',
     '💧Humidity',
+    'Next 6 Days',
   ]
     .map(d => `<th>${d}</th>`)
     .join('')
@@ -176,11 +185,11 @@ const getCityName = (name: string) => {
         <td ${tdStyle}>${getAqiStr(r.value)} </td>
         <td ${tdStyle}>${getAqiStr(r.avg)} </td>
         <td ${tdStyle}>${getAqiStr(r.max)} </td>
-        <td ${tdStyle}>${getAqiStr(r.tomorrow?.max)}</td>
         <td ${tdStyle}>${getDiffStr(r.diffAvg)} </td>
         <td ${tdStyle}>${getDiffStr(r.diffMax)} </td>
         <td ${tdStyle}>${r.temperature}°C</td>
         <td ${tdStyle}>${r.humidity}%</td>
+        <td ${tdStyle}>${getForecastPm25Str(r.forecastPm25)}</td>
       </tr>`,
     )
     .join('')

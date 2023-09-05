@@ -3,8 +3,8 @@
   "compilerOptions": {
     "outDir": "./dist",
     "target": "esnext",
-    "module": "esnext",
-    "moduleResolution": "node16",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
     "skipLibCheck": true
   },
   "include": ["src/**/*"],
