@@ -49,18 +49,16 @@ const getPm25Data = (
   time: { s: string },
   forecast: ForecastData,
 ) => {
+  const forecastPm25 = forecast.daily.pm25
   const todayDate = time.s.split(' ')[0]
-  const todayIndex = R.findIndex(R.propEq('day', todayDate))(
-    forecast.daily.pm25,
-  )
+  const todayIndex = R.findIndex(R.propEq(todayDate, 'day'))(forecastPm25)
 
   const recent = R.pipe(
     R.map((d: Forecast) => d.avg),
     R.mean,
     Math.round,
-  )(forecast.daily.pm25)
+  )(forecastPm25)
 
-  const forecastPm25 = forecast.daily.pm25
   const todayAqi = forecastPm25[todayIndex]
   const { max, avg } = todayAqi || {}
   const yesterdayAqi = forecastPm25[todayIndex - 1]
@@ -131,7 +129,7 @@ const getAqiStr = (aqi?: number) => {
   if (!aqi) return 'N/A'
 
   const targetLevel =
-    AQI_LEVELS.find(level => level.value >= aqi) ||
+    AQI_LEVELS.find(level => level.value >= aqi) ??
     AQI_LEVELS[AQI_LEVELS.length - 1]
   return `${targetLevel.emoji}${aqi}`
 }
@@ -153,33 +151,52 @@ const getCityName = (name: string) => {
     result,
   )
 
-  const details = sortedResultWithAvg.map((r, idx) =>
-    [
-      `${idx + 1}. ${getCityName(r.name)}`,
-      getAqiStr(r.value),
-      getAqiStr(r.avg),
-      getAqiStr(r.max),
-      `🗓️  ${getAqiStr(r.tomorrow?.max)}`,
-      getDiffStr(r.diffAvg),
-      getDiffStr(r.diffMax),
-      `🌡️ ${r.temperature}°C`,
-      `💧${r.humidity}%`,
-    ].join(),
-  )
-  const content = [
-    [
-      'City',
-      'Now',
-      'Avg',
-      'Max',
-      'Tomorrow',
-      'Diff Avg',
-      'Diff Max',
-      'Temp',
-      'Humidity',
-    ],
-    ...details,
-  ].join('<br/>')
-  core.setOutput('content', content)
+  const headers = [
+    'No',
+    'City',
+    'Now',
+    'Avg',
+    'Max',
+    '🗓️Tomorrow',
+    'Diff Avg',
+    'Diff Max',
+    '🌡️Temp',
+    '💧Humidity',
+  ]
+    .map(d => `<th>${d}</th>`)
+    .join('')
+
+  const tdStyle = 'style="text-align: center; vertical-align: middle;"'
+
+  const body = sortedResultWithAvg
+    .map(
+      (r, idx) => `<tr>
+        <td ${tdStyle}>${idx + 1}</td>
+        <td ${tdStyle}>${getCityName(r.name)}</td>
+        <td ${tdStyle}>${getAqiStr(r.value)} </td>
+        <td ${tdStyle}>${getAqiStr(r.avg)} </td>
+        <td ${tdStyle}>${getAqiStr(r.max)} </td>
+        <td ${tdStyle}>${getAqiStr(r.tomorrow?.max)}</td>
+        <td ${tdStyle}>${getDiffStr(r.diffAvg)} </td>
+        <td ${tdStyle}>${getDiffStr(r.diffMax)} </td>
+        <td ${tdStyle}>${r.temperature}°C</td>
+        <td ${tdStyle}>${r.humidity}%</td>
+      </tr>`,
+    )
+    .join('')
+
+  const tableContent = `<table border="1">
+          <thead>
+            <tr>
+            ${headers}
+            </tr>
+          </thead>
+          <tbody>
+            ${body}
+          </tbody>
+        </table>
+        `
+
+  core.setOutput('content', tableContent)
   setAirQualityLevels()
 })()

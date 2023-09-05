@@ -44,7 +44,7 @@ jobs:
             <html>
             <body>
             <h1>${{ steps.date.outputs.date }} AQI</h1>
-            <p>${{steps.check.outputs.content}}</p>
+            ${{steps.check.outputs.content}}
             <h2>AQI Levels</h2>
             <p>${{steps.check.outputs.levels}}</p>
             </body>
