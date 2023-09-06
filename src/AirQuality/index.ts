@@ -23,7 +23,9 @@ type AirQualityData = {
   aqi: number
   forecast: ForecastData
   time: { s: string }
-  city: []
+  city: {
+    geo: [number, number]
+  }
   iaqi: { t: NumericValue; h: NumericValue }
 }
 
@@ -31,18 +33,66 @@ const {
   AIR_QUALITY_API_URL = 'http://api.waqi.info/feed',
   AIR_QUALITY_API_TOKEN,
   AIR_QUALITY_CITY_LIST,
+  PIRATE_WEATHER_API_KEY,
 } = process.env
 
 const cityList = AIR_QUALITY_CITY_LIST?.split(',') ?? []
 
 const AQI_LEVELS = [
-  { value: 50, label: 'Good', emoji: '🟢' },
-  { value: 100, label: 'Moderate', emoji: '🟡' },
-  { value: 150, label: 'Unhealthy for Sensitive', emoji: '🟠' },
-  { value: 200, label: 'Unhealthy', emoji: '🔴' },
-  { value: 300, label: 'Very Unhealthy', emoji: '🟣' },
-  { value: 301, label: 'Hazardous', emoji: '🟤' },
+  { value: 50, label: 'Good', icon: '🟢' },
+  { value: 100, label: 'Moderate', icon: '🟡' },
+  { value: 150, label: 'Unhealthy for Sensitive', icon: '🟠' },
+  { value: 200, label: 'Unhealthy', icon: '🔴' },
+  { value: 300, label: 'Very Unhealthy', icon: '🟣' },
+  { value: 1000, label: 'Hazardous', icon: '🟤' },
 ]
+
+type WeatherForecast = {
+  time: number
+  icon: string
+  temperatureHigh: number
+  temperatureLow: number
+}
+
+type DailyWeatherForecast = {
+  daily: {
+    icon: string
+    data: WeatherForecast[]
+  }
+}
+
+const getWeatherIcon = (icon: string): string => {
+  return (
+    {
+      rain: '🌧️',
+      snow: '❄️',
+      sleet: '🌨️',
+      fog: '😶‍🌫️',
+      wind: '💨',
+      cloudy: '☁️',
+      'partly-cloudy-day': '🌤️',
+    }[icon] ?? '☀️'
+  )
+}
+
+const getWeatherForecast = async (
+  cityGeo: [number, number],
+): Promise<{ weatherForecast: string; weatherIcon: string }> => {
+  const url = `https://api.pirateweather.net/forecast/${PIRATE_WEATHER_API_KEY}/${cityGeo.join(
+    ',',
+  )}?units=ca&exclude=currently,hourly,minutely,flags`
+
+  const result = await fetch(url).then(
+    r => r.json() as Promise<DailyWeatherForecast>,
+  )
+
+  const weatherForecast = R.map((d: WeatherForecast) => {
+    const { icon, time } = d
+    const day = new Date(time * 1000).getDay() + 1
+    return `${day}${getWeatherIcon(icon)}`
+  })(result.daily.data).join(' ')
+  return { weatherForecast, weatherIcon: result.daily.icon }
+}
 
 const getPm25Data = (
   aqi: number,
@@ -60,7 +110,7 @@ const getPm25Data = (
   )(forecastPm25)
 
   const todayAqi = forecastPm25[todayIndex]
-  const { max, avg } = todayAqi || {}
+  const { max, avg } = todayAqi
   const yesterdayAqi = forecastPm25[todayIndex - 1]
   const { max: yMax, avg: yAvg } = yesterdayAqi || {}
 
@@ -83,11 +133,13 @@ type CityAirQuality = {
   humidity: number
   value?: number
   avg: number
-  max?: number
+  max: number
   tomorrow?: { max: number }
   diffAvg?: number
   diffMax?: number
   forecastPm25?: Forecast[]
+  weatherIcon: string
+  weatherForecast: string
 }
 
 const getAirQuality = async (cityName: string): Promise<CityAirQuality> => {
@@ -107,20 +159,25 @@ const getAirQuality = async (cityName: string): Promise<CityAirQuality> => {
     iaqi: { t, h },
   } = result
 
+  const { weatherForecast, weatherIcon } = await getWeatherForecast(city.geo)
+
   return {
     avg: 0,
+    max: 0,
     ...city,
     ...(time.s && getPm25Data(aqi, time, forecast)),
     name: cityName,
     time: time.s,
     temperature: t.v,
     humidity: h.v,
+    weatherIcon,
+    weatherForecast,
   }
 }
 
 const setAirQualityLevels = () => {
   const levels = AQI_LEVELS.map(
-    ({ value, label, emoji }, idx) => `${idx + 1}: ${emoji}${value} ${label}`,
+    ({ value, label, icon }, idx) => `${idx + 1}: ${icon}<${value} ${label}`,
     AQI_LEVELS,
   ).join('<br/>')
   core.setOutput('levels', levels)
@@ -132,7 +189,7 @@ const getAqiStr = (aqi?: number) => {
   const targetLevel =
     AQI_LEVELS.find(level => level.value >= aqi) ??
     AQI_LEVELS[AQI_LEVELS.length - 1]
-  return `${targetLevel.emoji}${aqi}`
+  return `${targetLevel.icon}${aqi}`
 }
 
 const getCityName = (name: string) => {
@@ -145,18 +202,27 @@ const getForecastPm25Str = (forecastPm25: Forecast[] = []): string => {
     .map(f => {
       return getAqiStr(f.avg)
     })
-    .join(',')
+    .join('')
 }
 
 ;(async () => {
   const result = await Promise.all(cityList.map(getAirQuality))
   const subject = result
     .filter(r => r.name)
-    .map(r => `${getCityName(r.name)}${getAqiStr(r.avg)}`)
+    .map(
+      r =>
+        `${getCityName(r.name)}${getAqiStr(r.avg)}${getWeatherIcon(
+          r.weatherIcon,
+        )}`,
+    )
   core.setOutput('subject', subject.join(';'))
 
   const sortedResultWithAvg = R.sortWith(
-    [R.descend(R.prop('avg')), R.ascend(R.prop('name'))],
+    [
+      R.ascend(R.prop('max')),
+      R.ascend(R.prop('avg')),
+      R.ascend(R.prop('name')),
+    ],
     result,
   )
 
@@ -168,9 +234,10 @@ const getForecastPm25Str = (forecastPm25: Forecast[] = []): string => {
     'Max',
     'Diff Avg',
     'Diff Max',
-    '🌡️Temp',
-    '💧Humidity',
-    'Next 6 Days',
+    '🌡️',
+    '💧',
+    'Next Few Days',
+    'Weather',
   ]
     .map(d => `<th>${d}</th>`)
     .join('')
@@ -190,6 +257,7 @@ const getForecastPm25Str = (forecastPm25: Forecast[] = []): string => {
         <td ${tdStyle}>${r.temperature}°C</td>
         <td ${tdStyle}>${r.humidity}%</td>
         <td ${tdStyle}>${getForecastPm25Str(r.forecastPm25)}</td>
+        <td ${tdStyle}>${r.weatherForecast}</td>
       </tr>`,
     )
     .join('')

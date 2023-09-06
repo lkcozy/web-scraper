@@ -39,6 +39,9 @@ gh secret set AIR_QUALITY_CITY_LIST -b"" # a,b,c
 
 # https://github.com/KanHarI/gpt-commit-summarizer
 gh secret set OPENAI_API_KEY -b""
+
+# https://pirate-weather.apiable.io/products/weather-data
+gh secret set PIRATE_WEATHER_API_KEY -b""
 ```
 
 Usage
