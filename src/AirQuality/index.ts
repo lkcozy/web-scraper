@@ -55,6 +55,7 @@ type WeatherForecast = {
 }
 
 type DailyWeatherForecast = {
+  message?: string
   daily: {
     icon: string
     data: WeatherForecast[]
@@ -62,6 +63,8 @@ type DailyWeatherForecast = {
 }
 
 const getWeatherIcon = (icon: string): string => {
+  if (!icon) return ''
+
   return (
     {
       rain: '🌧️',
@@ -85,6 +88,11 @@ const getWeatherForecast = async (
   const result = await fetch(url).then(
     r => r.json() as Promise<DailyWeatherForecast>,
   )
+
+  if (result.message) {
+    core.setOutput('weather_forecast_message', result.message)
+  }
+  if (!result?.daily?.data) return { weatherForecast: '', weatherIcon: '' }
 
   const weatherForecast = R.map((d: WeatherForecast) => {
     const { icon, time } = d

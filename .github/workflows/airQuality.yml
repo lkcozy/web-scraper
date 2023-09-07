@@ -11,8 +11,11 @@ jobs:
     steps:
       - uses: actions/checkout@master
 
-      - uses: egordm/gha-yarn-node-cache@v1
-        if: ${{ !env.ACT }}
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'yarn'
 
       - name: 🔧 Install and Build
         run: |
@@ -26,10 +29,11 @@ jobs:
           CI: true
           AIR_QUALITY_API_TOKEN: ${{ secrets.AIR_QUALITY_API_TOKEN }}
           AIR_QUALITY_CITY_LIST: ${{ secrets.AIR_QUALITY_CITY_LIST }}
+          PIRATE_WEATHER_API_KEY: ${{ secrets.PIRATE_WEATHER_API_KEY }}
 
       - name: Get current date
         id: date
-        run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
+        run: echo "date=$(date +'%Y-%m-%d')" >> "$GITHUB_ENV"
 
       - name: ✉️ Send mail
         if: always()

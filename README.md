@@ -21,13 +21,13 @@
 
 ## Getting Started
 
-Install github cli
+### Install github cli
 
 ```zsh
 brew install gh
 ```
 
-Set github secrets
+### Set github secrets
 
 ```zsh
 gh secret set EMAIL_USERNAME -b""
@@ -44,7 +44,9 @@ gh secret set OPENAI_API_KEY -b""
 gh secret set PIRATE_WEATHER_API_KEY -b""
 ```
 
-Usage
+### Add/Update secrets in workflows accordingly
+
+## Usage
 
 ```zsh
 yarn install
@@ -52,7 +54,7 @@ yarn build
 yarn watch
 ```
 
-[Test GitHub Actions locally](https://lkcozy.github.io/code-notes/git/github-actions#test-github-actions-locally)
+## [Test GitHub Actions locally](https://lkcozy.github.io/code-notes/git/github-actions#test-github-actions-locally)
 
 ```zsh
 brew install act
