@@ -7,9 +7,10 @@
   "description": "A simple web scraping in TypeScript",
   "license": "MIT",
   "type": "module",
+  "packageManager": "yarn@3.6.0",
   "scripts": {
-    "watch": "tsc-watch",
     "prewatch": "yarn build",
+    "watch": "yarn prewatch && tsc-watch",
     "start": "yarn watch --onSuccess \"yarn serve\"",
     "start:air-quality": "yarn watch src/AirQuality/index.ts --outDir ./dist/AirQuality --onSuccess \"yarn serve:air-quality\"",
     "start:fang": "yarn watch src/Fang/index.ts --outDir ./dist/Fang --onSuccess \"yarn serve:fang\"",
@@ -40,7 +41,7 @@
     "@types/ramda": "^0",
     "@typescript-eslint/eslint-plugin": "^6",
     "@typescript-eslint/parser": "^6",
-    "cspell": "^7",
+    "cspell": "^8",
     "eslint": "^8",
     "eslint-config-airbnb": "^19",
     "eslint-config-prettier": "^9",
@@ -48,14 +49,13 @@
     "eslint-plugin-prettier": "^5",
     "eslint-plugin-sonarjs": "^0",
     "husky": "^8",
-    "lint-staged": "^13",
+    "lint-staged": "^15",
     "prettier": "^3",
     "tsc-watch": "^6",
     "typescript": "^5"
   },
   "engines": {
-    "yarn": ">=1",
-    "node": ">=18",
+    "node": ">=20",
     "npm": "please-use-yarn"
   },
   "engineStrict": true

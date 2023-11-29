@@ -151,9 +151,9 @@ type CityAirQuality = {
 }
 
 const getAirQuality = async (cityName: string): Promise<CityAirQuality> => {
-  const result = await fetch(
-    `${AIR_QUALITY_API_URL}/${cityName}/?token=${AIR_QUALITY_API_TOKEN}`,
-  )
+  const url = `${AIR_QUALITY_API_URL}/${cityName}/?token=${AIR_QUALITY_API_TOKEN}`
+  console.log('url: ', url)
+  const result = await fetch(url)
     .then(r => r.json() as Promise<{ data: AirQualityData }>)
     .then(r => r.data)
 
