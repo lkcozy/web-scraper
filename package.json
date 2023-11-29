@@ -7,7 +7,7 @@
   "description": "A simple web scraping in TypeScript",
   "license": "MIT",
   "type": "module",
-  "packageManager": "yarn@3.6.0",
+  "packageManager": "yarn@4.0.2",
   "scripts": {
     "prewatch": "yarn build",
     "watch": "yarn prewatch && tsc-watch",
