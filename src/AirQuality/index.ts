@@ -78,6 +78,8 @@ const getWeatherIcon = (icon: string): string => {
   )
 }
 
+const DAYS_MAPPING = ['一', '二', '三', '四', '五', '六', '日']
+
 const getWeatherForecast = async (
   cityGeo: [number, number],
 ): Promise<{ weatherForecast: string; weatherIcon: string }> => {
@@ -95,10 +97,12 @@ const getWeatherForecast = async (
   if (!result?.daily?.data) return { weatherForecast: '', weatherIcon: '' }
 
   const weatherForecast = R.map((d: WeatherForecast) => {
-    const { icon, time } = d
-    const day = new Date(time * 1000).getDay() + 1
-    return `${day}${getWeatherIcon(icon)}`
-  })(result.daily.data).join(' ')
+    const { icon, time, temperatureLow, temperatureHigh } = d
+    const day = DAYS_MAPPING[new Date(time * 1000).getDay()]
+    return `${day}${getWeatherIcon(
+      icon,
+    )} ${temperatureLow.toFixed()}-${temperatureHigh.toFixed()}`
+  })(result.daily.data).join('')
   return { weatherForecast, weatherIcon: result.daily.icon }
 }
 
@@ -152,7 +156,6 @@ type CityAirQuality = {
 
 const getAirQuality = async (cityName: string): Promise<CityAirQuality> => {
   const url = `${AIR_QUALITY_API_URL}/${cityName}/?token=${AIR_QUALITY_API_TOKEN}`
-  console.log('url: ', url)
   const result = await fetch(url)
     .then(r => r.json() as Promise<{ data: AirQualityData }>)
     .then(r => r.data)
