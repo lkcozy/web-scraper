@@ -114,7 +114,7 @@ const getWeatherForecast = async (
     )} ${temperatureLow.toFixed()}-${temperatureHigh.toFixed()}`
   })(result.daily.data).join('')
 
-  const alerts = R.pipe(R.pluck('title'), R.join(';'))(result.alerts)
+  const alerts = R.pipe(R.pluck('title'), R.join(';'))(result.alerts ?? [])
 
   return {
     weatherForecast: `${weatherForecast}\n${alerts}`,
