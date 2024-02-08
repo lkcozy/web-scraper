@@ -54,12 +54,22 @@ type WeatherForecast = {
   temperatureLow: number
 }
 
+type DailyWeatherForecastAlert = {
+  title: string
+  severity: string
+  time: number
+  expires: number
+  description: string
+  url: string
+}
+
 type DailyWeatherForecast = {
   message?: string
   daily: {
     icon: string
     data: WeatherForecast[]
   }
+  alerts?: DailyWeatherForecastAlert[]
 }
 
 const getWeatherIcon = (icon: string): string => {
@@ -103,7 +113,13 @@ const getWeatherForecast = async (
       icon,
     )} ${temperatureLow.toFixed()}-${temperatureHigh.toFixed()}`
   })(result.daily.data).join('')
-  return { weatherForecast, weatherIcon: result.daily.icon }
+
+  const alerts = R.pipe(R.pluck('title'), R.join(';'))(result.alerts)
+
+  return {
+    weatherForecast: `${weatherForecast}\n${alerts}`,
+    weatherIcon: result.daily.icon,
+  }
 }
 
 const getPm25Data = (
