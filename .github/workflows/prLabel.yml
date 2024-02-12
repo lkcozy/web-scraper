@@ -1,0 +1,23 @@
+name: Reusable PR Label
+
+on: workflow_call
+
+jobs:
+  label:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository with labeler configuration
+        uses: actions/checkout@v4
+        with:
+          repository: lkcozy/web-scraper
+          ref: main
+          sparse-checkout: |
+            .github/labeler.yml
+
+      - name: label pr based on pr title and size
+        uses: srvaroa/labeler@master
+        with:
+          config_path: .github/labeler.yml
+          use_local_config: true
+        env:
+          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
