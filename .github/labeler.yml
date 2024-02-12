@@ -1,0 +1,50 @@
+version: 1
+labels:
+  - label: "giser"
+    authors: ["lkcozy"]
+  - label: 'work in progress'
+    title: '.*(?i)wip.*'
+  - label: 'feature'
+    title: '.*(?i)feat.*'
+  - label: 'hot fix'
+    title: '.*(?i)hotfix.*'
+  - label: 'fix'
+    title: '.*Fix.*'
+  - label: 'enhancement'
+    title: '.*(?i)enhancement.*'
+  - label: 'refactor'
+    title: '.*(?i)refactor.*'
+  - label: 'test'
+    title: '.*Test.*'
+  - label: 'ci'
+    title: '^(?i)ci.*'
+  - label: 'security'
+    title: '.*(?i)security.*'
+  - label: "size/XS"
+    size:
+        below: 10
+        exclude-files: ["yarn.lock"]
+  - label: "size/S"
+    size:
+        above: 9
+        below: 50
+        exclude-files: ["yarn.lock"]
+  - label: "size/M"
+    size:
+        above: 49
+        below: 200
+        exclude-files: ["yarn.lock"]
+  - label: "size/L"
+    size:
+        above: 199
+        below: 500
+        exclude-files: ["yarn.lock"]
+  - label: "size/XL"
+    size:
+        above: 499
+        below: 1000
+        exclude-files: ["yarn.lock"]
+  - label: "size/XXL"
+    size:
+        above: 999
+        exclude-files: ["yarn.lock"]
