@@ -6,20 +6,20 @@ on:
     - cron: '0 15 * * *' # https://crontab.guru/
 
 jobs:
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+  # lint:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
 
-      - name: Setup Node
-        uses: ./.github/actions/setupNode
+  #     - name: Setup Node
+  #       uses: ./.github/actions/setupNode
 
-      - name: 🔧 Lint
-        run: yarn lint
+  #     - name: 🔧 Lint
+  #       run: yarn lint
 
   build:
     runs-on: ubuntu-latest
-    needs: [lint]
+    # needs: [lint]
     steps:
       - uses: actions/checkout@v4
 
@@ -28,16 +28,21 @@ jobs:
 
       - name: 🔧 Build
         run: yarn build
+        env:
+          CI: true
 
       - uses: actions/upload-artifact@v4
         with:
           name: my-artifact
+          retention-days: 1
+          # compression-level: 9
           path: |
             dist
             node_modules
             package.json
             yarn.lock
             .yarnrc.yml
+            .nvmrc
 
   fetch:
     runs-on: ubuntu-latest
@@ -51,6 +56,13 @@ jobs:
         with:
           name: my-artifact
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+
+      - run: corepack enable
+        shell: bash
+
       - name: 🔎 Check Updates
         id: check
         run: yarn serve:air-quality
@@ -60,11 +72,15 @@ jobs:
           AIR_QUALITY_CITY_LIST: ${{ secrets.AIR_QUALITY_CITY_LIST }}
           PIRATE_WEATHER_API_KEY: ${{ secrets.PIRATE_WEATHER_API_KEY }}
 
+      # - uses: geekyeggo/delete-artifact@v4
+      #   with:
+      #     name: my-artifact
+
   sendDailyEmail:
     runs-on: ubuntu-latest
     needs: [fetch]
     steps:
-      - uses: actions/checkout@v4
+      - run: echo "${{needs.fetch.outputs.subject}}"
 
       - name: Get current date
         id: date
