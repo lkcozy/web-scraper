@@ -20,10 +20,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     needs: [lint]
-    outputs:
-      subject: ${{ steps.check.outputs.subject }}
-      content: ${{ steps.check.outputs.content }}
-      levels: ${{ steps.check.outputs.levels }}
     steps:
       - uses: actions/checkout@v4
 
@@ -36,7 +32,24 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: my-artifact
-          path: dist
+          path: |
+            dist
+            node_modules
+            package.json
+            yarn.lock
+            .yarnrc.yml
+
+  fetch:
+    runs-on: ubuntu-latest
+    needs: [build]
+    outputs:
+      subject: ${{ steps.check.outputs.subject }}
+      content: ${{ steps.check.outputs.content }}
+      levels: ${{ steps.check.outputs.levels }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: my-artifact
 
       - name: 🔎 Check Updates
         id: check
@@ -49,7 +62,7 @@ jobs:
 
   sendDailyEmail:
     runs-on: ubuntu-latest
-    needs: [build]
+    needs: [fetch]
     steps:
       - uses: actions/checkout@v4
 
@@ -57,26 +70,26 @@ jobs:
         id: date
         run: echo "date=$(date +'%Y-%m-%d')" >> "$GITHUB_ENV"
 
-      - name: ✉️ Send daily mail
-        if: always()
-        uses: dawidd6/action-send-mail@v3
-        with:
-          server_address: smtp.gmail.com
-          server_port: 465
-          username: ${{ secrets.EMAIL_USERNAME }}
-          password: ${{ secrets.EMAIL_PASSWORD }}
-          subject: 🦠 AQI ${{needs.build.outputs.subject}}
-          html_body: |
-            <!DOCTYPE html>
-            <html>
-            <body>
-            <h1>${{ steps.date.outputs.date }} AQI</h1>
-            ${{needs.build.outputs.content}}
-            <h2>AQI Levels</h2>
-            <p>${{needs.build.outputs.levels}}</p>
-            </body>
-            </html>
-          to: lkklcozy@gmail.com
-          from: github-actions-update
-      # using the workflow with default settings https://github.com/marketplace/actions/keepalive-workflow
-      - uses: gautamkrishnar/keepalive-workflow@v1
+      # - name: ✉️ Send daily mail
+      #   if: always()
+      #   uses: dawidd6/action-send-mail@v3
+      #   with:
+      #     server_address: smtp.gmail.com
+      #     server_port: 465
+      #     username: ${{ secrets.EMAIL_USERNAME }}
+      #     password: ${{ secrets.EMAIL_PASSWORD }}
+      #     subject: 🦠 AQI ${{needs.fetch.outputs.subject}}
+      #     html_body: |
+      #       <!DOCTYPE html>
+      #       <html>
+      #       <body>
+      #       <h1>${{ steps.date.outputs.date }} AQI</h1>
+      #       ${{needs.fetch.outputs.content}}
+      #       <h2>AQI Levels</h2>
+      #       <p>${{needs.fetch.outputs.levels}}</p>
+      #       </body>
+      #       </html>
+      #     to: lkklcozy@gmail.com
+      #     from: github-actions-update
+      # # using the workflow with default settings https://github.com/marketplace/actions/keepalive-workflow
+      # - uses: gautamkrishnar/keepalive-workflow@v1
