@@ -90,9 +90,15 @@ const getWeatherIcon = (icon: string): string => {
 
 const DAYS_MAPPING = ['一', '二', '三', '四', '五', '六', '日']
 
+type WeatherForecastResult = {
+  weatherForecast: string
+  weatherIcon: string
+  weatherAlerts: string
+}
+
 const getWeatherForecast = async (
   cityGeo: [number, number],
-): Promise<{ weatherForecast: string; weatherIcon: string }> => {
+): Promise<WeatherForecastResult> => {
   const url = `https://api.pirateweather.net/forecast/${PIRATE_WEATHER_API_KEY}/${cityGeo.join(
     ',',
   )}?units=ca&exclude=currently,hourly,minutely,flags`
@@ -104,7 +110,8 @@ const getWeatherForecast = async (
   if (result.message) {
     core.setOutput('weather_forecast_message', result.message)
   }
-  if (!result?.daily?.data) return { weatherForecast: '', weatherIcon: '' }
+  if (!result?.daily?.data)
+    return { weatherForecast: '', weatherIcon: '', weatherAlerts: '' }
 
   const weatherForecast = R.map((d: WeatherForecast) => {
     const { icon, time, temperatureLow, temperatureHigh } = d
@@ -114,10 +121,14 @@ const getWeatherForecast = async (
     )} ${temperatureLow.toFixed()}-${temperatureHigh.toFixed()}`
   })(result.daily.data).join('')
 
-  const alerts = R.pipe(R.pluck('title'), R.join(';'))(result.alerts ?? [])
+  const weatherAlerts = R.pipe(
+    R.pluck('title'),
+    R.join(';'),
+  )(result.alerts ?? [])
 
   return {
-    weatherForecast: `${weatherForecast}\n${alerts}`,
+    weatherAlerts,
+    weatherForecast: `${weatherForecast}\n${weatherAlerts}`,
     weatherIcon: result.daily.icon,
   }
 }
@@ -166,9 +177,7 @@ type CityAirQuality = {
   diffAvg?: number
   diffMax?: number
   forecastPm25?: Forecast[]
-  weatherIcon: string
-  weatherForecast: string
-}
+} & WeatherForecastResult
 
 const getAirQuality = async (cityName: string): Promise<CityAirQuality> => {
   const url = `${AIR_QUALITY_API_URL}/${cityName}/?token=${AIR_QUALITY_API_TOKEN}`
@@ -186,7 +195,7 @@ const getAirQuality = async (cityName: string): Promise<CityAirQuality> => {
     iaqi: { t, h },
   } = result
 
-  const { weatherForecast, weatherIcon } = await getWeatherForecast(city.geo)
+  const weatherForecastResult = await getWeatherForecast(city.geo)
 
   return {
     avg: 0,
@@ -197,8 +206,7 @@ const getAirQuality = async (cityName: string): Promise<CityAirQuality> => {
     time: time.s,
     temperature: t.v,
     humidity: h.v,
-    weatherIcon,
-    weatherForecast,
+    ...weatherForecastResult,
   }
 }
 
@@ -234,6 +242,12 @@ const getForecastPm25Str = (forecastPm25: Forecast[] = []): string => {
 
 ;(async () => {
   const result = await Promise.all(cityList.map(getAirQuality))
+  const hasWeatherAlerts = !R.pipe(
+    R.pluck('weatherAlerts'),
+    R.filter(Boolean),
+    R.isEmpty,
+  )(result)
+
   const subject = result
     .filter(r => r.name)
     .map(
@@ -242,7 +256,10 @@ const getForecastPm25Str = (forecastPm25: Forecast[] = []): string => {
           r.weatherIcon,
         )}`,
     )
-  core.setOutput('subject', subject.join(';'))
+  core.setOutput(
+    'subject',
+    `${hasWeatherAlerts ? '‼️' : ''}${subject.join(';')}`,
+  )
 
   const sortedResultWithAvg = R.sortWith(
     [

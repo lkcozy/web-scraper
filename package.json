@@ -1,6 +1,6 @@
 {
   "name": "web-scraper",
-  "version": "4.0.0",
+  "version": "4.1.0",
   "main": "index.ts",
   "repository": "git@github.com:lkcozy/web-scraper.git",
   "author": "lkcozy<lkklcozy@gmail.com>",

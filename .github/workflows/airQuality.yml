@@ -3,7 +3,7 @@ name: 🦠 Check Air Quality
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 15 * * *' # https://crontab.guru/
+    - cron: '0 16 * * *' # https://crontab.guru/
 
 jobs:
   # lint:
@@ -86,26 +86,26 @@ jobs:
         id: date
         run: echo "date=$(date +'%Y-%m-%d')" >> "$GITHUB_ENV"
 
-      # - name: ✉️ Send daily mail
-      #   if: always()
-      #   uses: dawidd6/action-send-mail@v3
-      #   with:
-      #     server_address: smtp.gmail.com
-      #     server_port: 465
-      #     username: ${{ secrets.EMAIL_USERNAME }}
-      #     password: ${{ secrets.EMAIL_PASSWORD }}
-      #     subject: 🦠 AQI ${{needs.fetch.outputs.subject}}
-      #     html_body: |
-      #       <!DOCTYPE html>
-      #       <html>
-      #       <body>
-      #       <h1>${{ steps.date.outputs.date }} AQI</h1>
-      #       ${{needs.fetch.outputs.content}}
-      #       <h2>AQI Levels</h2>
-      #       <p>${{needs.fetch.outputs.levels}}</p>
-      #       </body>
-      #       </html>
-      #     to: lkklcozy@gmail.com
-      #     from: github-actions-update
-      # # using the workflow with default settings https://github.com/marketplace/actions/keepalive-workflow
-      # - uses: gautamkrishnar/keepalive-workflow@v1
+      - name: ✉️ Send daily mail
+        if: always()
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: 🦠 AQI ${{needs.fetch.outputs.subject}}
+          html_body: |
+            <!DOCTYPE html>
+            <html>
+            <body>
+            <h1>${{ steps.date.outputs.date }} AQI</h1>
+            ${{needs.fetch.outputs.content}}
+            <h2>AQI Levels</h2>
+            <p>${{needs.fetch.outputs.levels}}</p>
+            </body>
+            </html>
+          to: lkklcozy@gmail.com
+          from: github-actions-update
+      # using the workflow with default settings https://github.com/marketplace/actions/keepalive-workflow
+      - uses: gautamkrishnar/keepalive-workflow@v1
