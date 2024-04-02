@@ -52,6 +52,7 @@ gh secret set PIRATE_WEATHER_API_KEY -b""
 yarn install
 yarn build
 yarn watch
+yarn upgrade-interactive # yarn outdated in 1.0
 ```
 
 ## [Test GitHub Actions locally](https://lkcozy.github.io/code-notes/git/github-actions#test-github-actions-locally)
