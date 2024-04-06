@@ -298,8 +298,8 @@ const getForecastPm25Str = (forecastPm25: Forecast[] = []): string => {
         <td ${tdStyle}>${getAqiStr(r.max)} </td>
         <td ${tdStyle}>${getDiffStr(r.diffAvg)} </td>
         <td ${tdStyle}>${getDiffStr(r.diffMax)} </td>
-        <td ${tdStyle}>${r.temperature}°C</td>
-        <td ${tdStyle}>${r.humidity}%</td>
+        <td ${tdStyle}>${Math.round(r.temperature)}°C</td>
+        <td ${tdStyle}>${Math.round(r.humidity)}%</td>
         <td ${tdStyle}>${getForecastPm25Str(r.forecastPm25)}</td>
         <td ${tdStyle}>${r.weatherForecast}</td>
       </tr>`,
