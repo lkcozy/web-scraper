@@ -9,8 +9,7 @@
   "type": "module",
   "packageManager": "yarn@4.1.1",
   "scripts": {
-    "prewatch": "yarn build",
-    "watch": "yarn prewatch && tsc-watch",
+    "watch": "yarn build && tsc-watch",
     "start": "yarn watch --onSuccess \"yarn serve\"",
     "start:air-quality": "yarn watch src/AirQuality/index.ts --outDir ./dist/AirQuality --onSuccess \"yarn serve:air-quality\"",
     "start:fang": "yarn watch src/Fang/index.ts --outDir ./dist/Fang --onSuccess \"yarn serve:fang\"",
@@ -22,7 +21,8 @@
     "format": "prettier --write --loglevel warn",
     "lint:all:format": "yarn format \"**/*.{ts,json,md}\"",
     "prepare": "husky install",
-    "spell-check": "cspell --unique --no-progress \"**/*.{md,ts,tsx,js,css,less,json,yml,yaml,html,sh}\""
+    "spell-check": "cspell --unique --no-progress \"**/*.{md,ts,tsx,js,css,less,json,yml,yaml,html,sh}\"",
+    "reinstall": "rm -rf yarn.lock & touch yarn.lock & yarn"
   },
   "dependencies": {
     "@actions/core": "^1",

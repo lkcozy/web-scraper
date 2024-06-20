@@ -300,8 +300,8 @@ const getForecastPm25Str = (forecastPm25: Forecast[] = []): string => {
         <td ${tdStyle}>${getDiffStr(r.diffMax)} </td>
         <td ${tdStyle}>${Math.round(r.temperature)}°C</td>
         <td ${tdStyle}>${Math.round(r.humidity)}%</td>
-        <td ${tdStyle}>${getForecastPm25Str(r.forecastPm25)}</td>
         <td ${tdStyle}>${r.weatherForecast}</td>
+        <td ${tdStyle}>${getForecastPm25Str(r.forecastPm25)}</td>
       </tr>`,
     )
     .join('')
