@@ -4,7 +4,7 @@ import * as R from 'ramda'
 import * as core from '@actions/core'
 
 // eslint-disable-next-line import/no-unresolved
-import { diff, getDiffStr, capitalize } from '../utils.js'
+import { diff, capitalize } from '../utils.js'
 
 dotenv.config()
 
@@ -276,17 +276,18 @@ const getForecastPm25Str = (forecastPm25: Forecast[] = []): string => {
     'Now',
     'Avg',
     'Max',
-    'Diff Avg',
-    'Diff Max',
     '🌡️',
-    '💧',
-    'Next Few Days',
     'Weather',
+    'Next Few Days',
   ]
     .map(d => `<th>${d}</th>`)
     .join('')
 
-  const tdStyle = 'style="text-align: center; vertical-align: middle;"'
+  const defaultTdStyles = ['text-align: center', 'vertical-align: middle']
+
+  const tdStyle = `style="${defaultTdStyles.join(';')};"`
+
+  const tdWeatherStyle = `style="${[...defaultTdStyles, 'width: 20%'].join(';')};"`
 
   const body = sortedResultWithAvg
     .map(
@@ -296,11 +297,8 @@ const getForecastPm25Str = (forecastPm25: Forecast[] = []): string => {
         <td ${tdStyle}>${getAqiStr(r.value)} </td>
         <td ${tdStyle}>${getAqiStr(r.avg)} </td>
         <td ${tdStyle}>${getAqiStr(r.max)} </td>
-        <td ${tdStyle}>${getDiffStr(r.diffAvg)} </td>
-        <td ${tdStyle}>${getDiffStr(r.diffMax)} </td>
         <td ${tdStyle}>${Math.round(r.temperature)}°C</td>
-        <td ${tdStyle}>${Math.round(r.humidity)}%</td>
-        <td ${tdStyle}>${r.weatherForecast}</td>
+        <td ${tdWeatherStyle}>${r.weatherForecast}</td>
         <td ${tdStyle}>${getForecastPm25Str(r.forecastPm25)}</td>
       </tr>`,
     )
