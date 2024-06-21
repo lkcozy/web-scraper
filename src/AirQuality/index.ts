@@ -232,6 +232,7 @@ const getCityName = (name: string) => {
   return capitalize(lastName?.split('-')[0])
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const getForecastPm25Str = (forecastPm25: Forecast[] = []): string => {
   return forecastPm25
     .map(f => {
@@ -270,16 +271,7 @@ const getForecastPm25Str = (forecastPm25: Forecast[] = []): string => {
     result,
   )
 
-  const headers = [
-    'No',
-    'City',
-    'Now',
-    'Avg',
-    'Max',
-    '🌡️',
-    'Weather',
-    'Next Few Days',
-  ]
+  const headers = ['No', 'City', 'Avg', 'Max', '🌡️', 'Next 7 Days Weather']
     .map(d => `<th>${d}</th>`)
     .join('')
 
@@ -287,19 +279,18 @@ const getForecastPm25Str = (forecastPm25: Forecast[] = []): string => {
 
   const tdStyle = `style="${defaultTdStyles.join(';')};"`
 
-  const tdWeatherStyle = `style="${[...defaultTdStyles, 'width: 20%'].join(';')};"`
+  const tdWeatherStyle = `style="${['width: 50%px'].join(';')};"`
 
+  // <td ${tdStyle}>${getForecastPm25Str(r.forecastPm25)}</td>
   const body = sortedResultWithAvg
     .map(
       (r, idx) => `<tr>
         <td ${tdStyle}>${idx + 1}</td>
         <td ${tdStyle}>${getCityName(r.name)}</td>
-        <td ${tdStyle}>${getAqiStr(r.value)} </td>
         <td ${tdStyle}>${getAqiStr(r.avg)} </td>
         <td ${tdStyle}>${getAqiStr(r.max)} </td>
         <td ${tdStyle}>${Math.round(r.temperature)}°C</td>
         <td ${tdWeatherStyle}>${r.weatherForecast}</td>
-        <td ${tdStyle}>${getForecastPm25Str(r.forecastPm25)}</td>
       </tr>`,
     )
     .join('')

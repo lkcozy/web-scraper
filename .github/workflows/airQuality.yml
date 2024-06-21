@@ -107,5 +107,13 @@ jobs:
             </html>
           to: lkklcozy@gmail.com
           from: github-actions-update
-      # using the workflow with default settings https://github.com/marketplace/actions/keepalive-workflow
+
+  keepalive-job:
+    name: Keepalive Workflow
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+    steps:
+      - uses: actions/checkout@v4
+        # using the workflow with default settings https://github.com/marketplace/actions/keepalive-workflow
       - uses: gautamkrishnar/keepalive-workflow@v2
