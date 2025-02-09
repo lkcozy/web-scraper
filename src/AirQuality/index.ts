@@ -218,19 +218,14 @@ const setAirQualityLevels = () => {
   core.setOutput('levels', levels)
 }
 
-const getAqiStr = (aqi?: number) => {
-  if (!aqi) return 'N/A'
-
+const getAqiStr = R.ifElse(R.isNil, R.always('N/A'), (aqi: number) => {
   const targetLevel =
-    AQI_LEVELS.find(level => level.value >= aqi) ??
-    AQI_LEVELS[AQI_LEVELS.length - 1]
-  return `${targetLevel.icon}${aqi}`
-}
+    R.find(level => level.value >= aqi, AQI_LEVELS) ?? R.last(AQI_LEVELS)
+  return `${targetLevel!.icon}${aqi}`
+})
 
-const getCityName = (name: string) => {
-  const lastName = R.last(name.split('/'))
-  return capitalize(lastName?.split('-')[0])
-}
+const getCityName = (name: string) =>
+  R.pipe(R.split('/'), R.last, R.split('-'), R.head, capitalize)(name)
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const getForecastPm25Str = (forecastPm25: Forecast[] = []): string => {
@@ -243,24 +238,26 @@ const getForecastPm25Str = (forecastPm25: Forecast[] = []): string => {
 
 ;(async () => {
   const result = await Promise.all(cityList.map(getAirQuality))
-  const hasWeatherAlerts = !R.pipe(
+  const hasWeatherAlerts = R.pipe(
     R.pluck('weatherAlerts'),
     R.filter(Boolean),
-    R.isEmpty,
+    R.isNotEmpty,
   )(result)
 
-  const subject = result
-    .filter(r => r.name)
-    .map(
-      r =>
-        `${getCityName(r.name)}${getAqiStr(r.avg)}${getWeatherIcon(
-          r.weatherIcon,
-        )}`,
-    )
-  core.setOutput(
-    'subject',
-    `${hasWeatherAlerts ? '‼️' : ''}${subject.join(';')}`,
-  )
+  const subject = R.pipe(
+    R.filter<CityAirQuality>(r => !!r.name),
+    R.map(r =>
+      R.join('', [
+        getCityName(r.name),
+        getWeatherIcon(r.weatherIcon),
+        r.temperature,
+        getAqiStr(r.avg),
+      ]),
+    ),
+    R.join(';'),
+  )(result)
+
+  core.setOutput('subject', `${hasWeatherAlerts ? '‼️' : ''}${subject}`)
 
   const sortedResultWithAvg = R.sortWith(
     [
